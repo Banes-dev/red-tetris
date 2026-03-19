@@ -1,1 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700&display=swap');
+
 @import "tailwindcss";
+
+@theme {
+	--color-arcade-black: #0A0412;
+	--color-arcade-purple: #1A0B2E;
+	--color-neon-red: #ff073a;
+	--color-neon-cyan: #00F7FF;
+	--color-neon-magenta: #FF00FF;
+	--color-neon-yellow: #FFEB3B;
+	--color-neon-purple: #9C27B0;
+	--color-neon-orange: #FF5722;
+	--color-neon-green: #4CAF50;
+	--color-neon-pink: #E91E63;
+	--color-neon-blue: #3F51B5;
+
+	--font-arcade: "Press Start 2P", system-ui;
+	--font-retro: "Orbitron", sans-serif;
+}
+
+@utility animate-flicker {
+  animation: flicker 3s linear infinite;
+}
+@keyframes flicker {
+    0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+        opacity: 1;
+        text-shadow: 0 0 10px rgba(255, 7, 58, 0.8), 0 0 20px rgba(255, 7, 58, 0.5);
+    }
+    20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+        opacity: 0.4;
+        text-shadow: none;
+    }
+}
+
