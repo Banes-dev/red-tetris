@@ -1,10 +1,8 @@
-import {Routes, Route} from 'react-router-dom';
 import {useEffect} from "react"
 import {useDispatch} from "react-redux"
 import {socket} from "./socket/socket"
 import {setState, setMe} from "./store/game_slice"
-import Home from "./page/Home"
-import GameGrid from "./game/game_grid"
+import Router from "./Router";
 
 export default function App() {
 	const dispatch = useDispatch()
@@ -41,23 +39,9 @@ export default function App() {
 	}, [])
 
 	return (
-		<Routes>
-			<Route path="/" element={<Home/>}/>
-			{/* <Route path="/lobby" element={<Lobby/>}/> */}
-		</Routes>
+		<Router/>
 		// <div className="flex items-center justify-center h-screen bg-black">
 		// 	<GameGrid/>
 		// </div>
 	)
 }
-
-		// <Routes>
-		// 	<Route path="/" element={<Home />} />
-		// 	<Route path="/game" element={<GameCanvas />} />
-		// 	<GameCanvas />
-		// 	<Route path="/about" element={<About />} />
-		// 	<Route path="*" element={<NotFound />} />
-		// 	<div className="flex items-center justify-center h-screen bg-black">
-		// 		<GameCanvas />
-		// 	</div>
-		// </Routes>
