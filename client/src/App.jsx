@@ -4,7 +4,8 @@ import {socket} from "./socket/socket"
 import {setState, setMe} from "./store/game_slice"
 import Router from "./Router";
 
-export default function App() {
+export default function App()
+{
 	const dispatch = useDispatch()
 
 	// connect socket + state
@@ -40,8 +41,5 @@ export default function App() {
 
 	return (
 		<Router/>
-		// <div className="flex items-center justify-center h-screen bg-black">
-		// 	<GameGrid/>
-		// </div>
 	)
 }

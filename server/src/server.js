@@ -3,7 +3,7 @@ import http from "http"
 import {Server} from "socket.io"
 import cors from "cors"
 
-import {registerGameSocket} from "./socket/game_socket.js"
+import {registerGameSocket} from "./socket/GameSocket.js"
 
 const app = express()
 

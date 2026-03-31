@@ -2,7 +2,8 @@ import {Link} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faUser, faUsers} from '@fortawesome/free-solid-svg-icons'
 
-export default function Home() {
+export default function Home()
+{
     return (
         <div className="w-screen min-h-screen flex flex-col hidden-scrollbar relative">
 
@@ -16,10 +17,10 @@ export default function Home() {
             </div>
 
 			{/* Game title */}
-			<div className="absolute flex flex-row items-center justify-center w-full p-6">
-                <img src="/red-tetris_logo.png" alt="Logo Tetris" className="w-36 mr-6" loading="eager"/>
-				<h1 className="text-5xl font-bold text-neon-red font-arcade text-center animate-flicker">red-tetris</h1>
-            </div>
+			<div className="absolute flex flex-row items-center justify-center w-full p-2 md:p-6 mt-0">
+				<img src="/red-tetris_logo.png" alt="Logo Tetris" className="w-24 md:w-36 mr-6 mb-0" loading="eager"/>
+				<h1 className="text-2xl md:text-5xl font-bold text-neon-red font-arcade text-center animate-flicker">red-tetris</h1>
+			</div>
 
             <main className="flex flex-col items-center justify-center w-full min-h-screen">
 				<div className="flex flex-col items-center justify-center flex-grow w-full">
@@ -28,7 +29,7 @@ export default function Home() {
 							border-neon-purple rounded-lg shadow-[0_0_10px_#00F7FF,0_0_20px_#9C27B0] animate-slide_down_pulse
 							transition-all duration-200 hover:scale-105 hover:shadow-[0_0_15px_#00F7FF,0_0_25px_#9C27B0] active:translate-y-1"
 						><FontAwesomeIcon icon={faUser} className="text-neon-cyan text-2xl mr-2"/>SOLO</Link>
-						<Link to="/solo_param" className="mt-12 flex items-center px-6 py-3 bg-arcade-purple text-neon-cyan font-arcade text-xl border-4
+						<Link to="/rooms" className="mt-12 flex items-center px-6 py-3 bg-arcade-purple text-neon-cyan font-arcade text-xl border-4
 							border-neon-purple rounded-lg shadow-[0_0_10px_#00F7FF,0_0_20px_#9C27B0] animate-slide_up_pulse
 							transition-all duration-200 hover:scale-105 hover:shadow-[0_0_15px_#00F7FF,0_0_25px_#9C27B0] active:translate-y-1"
 						><FontAwesomeIcon icon={faUsers} className="text-neon-cyan text-2xl mr-3"/>MULTIPLAYER</Link>

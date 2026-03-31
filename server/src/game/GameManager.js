@@ -1,16 +1,20 @@
-class GameManager {
-	constructor() {
+class GameManager
+{
+	constructor()
+	{
 		this.players = new Map()
 	}
 
-	addPlayer(id) {
+	addPlayer(id)
+	{
 		this.players.set(id, {
 			board: [],
 			score: 0
 		})
 	}
 
-	handleInput(id, input) {
+	handleInput(id, input)
+	{
 		const player = this.players.get(id)
 		if (!player)
 			return

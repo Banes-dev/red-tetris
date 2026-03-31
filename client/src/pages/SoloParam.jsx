@@ -4,7 +4,8 @@ import {Link} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCircleLeft, faPlay} from '@fortawesome/free-solid-svg-icons'
 
-export default function SoloParam() {
+export default function SoloParam()
+{
 	const [cookies, setCookie] = useCookies(['best_score', 'last_score']);
     useEffect(() => {
         // Définir les cookies une seule fois au montage du composant
@@ -40,23 +41,12 @@ export default function SoloParam() {
             </div>
 
 			{/* Game title */}
-			{/* <div className="absolute flex flex-row items-center justify-center w-full p-6">
-                <img src="/red-tetris_logo.png" alt="Logo Tetris" className="w-36 mr-6" loading="eager"/>
-				<h1 className="text-5xl font-bold text-neon-red font-arcade text-center animate-flicker">red-tetris</h1>
-            </div> */}
-			<div className="absolute flex flex-col md:flex-row items-center justify-center w-full p-2 md:p-6">
-				<img
-					src="/red-tetris_logo.png"
-					alt="Logo Tetris"
-					className="w-24 md:w-36 mr-0 md:mr-6 mb-4 md:mb-0"
-					loading="eager"
-				/>
-				<h1 className="text-3xl md:text-5xl font-bold text-neon-red font-arcade text-center animate-flicker">
-					red-tetris
-				</h1>
+			<div className="absolute flex flex-row items-center justify-center w-full p-2 md:p-6 mt-8 md:mt-0">
+				<img src="/red-tetris_logo.png" alt="Logo Tetris" className="w-24 md:w-36 mr-6 mb-0" loading="eager"/>
+				<h1 className="text-2xl md:text-5xl font-bold text-neon-red font-arcade text-center animate-flicker">red-tetris</h1>
 			</div>
 
-            <main className="flex flex-col items-center justify-center w-full min-h-screen">
+            <main className="flex flex-col items-center justify-center w-full min-h-screen overflow-hidden">
 				<Link to="/" className="absolute top-0 left-0 w-36 h-12 flex items-center justify-center rounded-br-lg bg-arcade-black border-b-4 border-r-4 border-neon-blue font-arcade text-base text-white animate-slide_in_right transition-all duration-200 hover:scale-105"
 				><FontAwesomeIcon icon={faCircleLeft} className="text-neon-blue text-lg mr-2"/> return</Link>
 
@@ -102,7 +92,7 @@ export default function SoloParam() {
 									{timeOptions.map((minutes, index) => {
 									const position = (index / (timeOptions.length - 1)) * 100;
 									return (
-										<span key={minutes} className="absolute text-neon-red font-arcade text-sm" style={{ left: `${position}%`, transform: 'translateX(-50%)' }}>{minutes}</span>
+										<span key={minutes} className="absolute text-neon-red font-arcade text-sm" style={{left: `${position}%`, transform: 'translateX(-50%)'}}>{minutes}</span>
 									);
 									})}
 								</div>
@@ -110,7 +100,7 @@ export default function SoloParam() {
 							</div>
 
 							{/* Btn start game*/}
-							<button type="submit" className="mt-8 px-6 py-3 bg-arcade-purple text-neon-cyan font-arcade text-xl border-4 border-neon-purple rounded-lg shadow-[0_0_10px_#00F7FF,0_0_20px_#9C27B0] animate-arcade-pulse transition-all duration-200 hover:scale-105 hover:shadow-[0_0_15px_#00F7FF,0_0_25px_#9C27B0] active:translate-y-1">
+							<button type="submit" className="mt-6 px-6 py-3 bg-arcade-purple text-neon-cyan font-arcade text-xl border-4 border-neon-purple rounded-lg shadow-[0_0_10px_#00F7FF,0_0_20px_#9C27B0] animate-arcade-pulse transition-all duration-200 hover:scale-105 hover:shadow-[0_0_15px_#00F7FF,0_0_25px_#9C27B0] active:translate-y-1">
 								<FontAwesomeIcon icon={faPlay} className="text-neon-cyan text-2xl mr-3"/>Start the game
 							</button>
 						</form>
