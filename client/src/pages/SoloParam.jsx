@@ -25,7 +25,7 @@ export default function SoloParam()
         // Envoie les paramètres au serveur et redirige vers la page de jeu
         // Exemple : fetch('/api/game', { method: 'POST', body: JSON.stringify({ gravityLevel, invisiblePieces, timeLimit }) });
         // Puis redirection : navigate('/game');
-		console.log({ gravityLevel, invisiblePieces, timeLimit });
+		console.log({gravityLevel, invisiblePieces, timeLimit});
     };
 
     return (
@@ -46,7 +46,7 @@ export default function SoloParam()
 				<h1 className="text-2xl md:text-5xl font-bold text-neon-red font-arcade text-center animate-flicker">red-tetris</h1>
 			</div>
 
-            <main className="flex flex-col items-center justify-center w-full min-h-screen overflow-hidden">
+            <main className="flex flex-col items-center justify-center w-full min-h-screen overflow-hidden pt-36 md:pt-0 pb-12 md:pb-0">
 				<Link to="/" className="absolute top-0 left-0 w-36 h-12 flex items-center justify-center rounded-br-lg bg-arcade-black border-b-4 border-r-4 border-neon-blue font-arcade text-base text-white animate-slide_in_right transition-all duration-200 hover:scale-105"
 				><FontAwesomeIcon icon={faCircleLeft} className="text-neon-blue text-lg mr-2"/> return</Link>
 

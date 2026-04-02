@@ -1,9 +1,13 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleLeft, faPlus, faLock, faLockOpen, faUser } from '@fortawesome/free-solid-svg-icons';
+import {useState} from "react";
+import {Link, useNavigate} from "react-router-dom";
+import {socket} from "../socket/socket"
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCircleLeft, faPlus, faLock, faLockOpen} from "@fortawesome/free-solid-svg-icons";
 
 export default function MultiParam() {
+	const navigate = useNavigate();
+	const [errorMessage, setErrorMessage] = useState('');
+
     // Paramètres de la room
     const [roomName, setRoomName] = useState('');
     const [playerName, setPlayerName] = useState('');
@@ -19,21 +23,40 @@ export default function MultiParam() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log({
-            roomName,
-            playerName,
-            gravityLevel,
-            invisiblePieces,
-            timeLimit,
-            playerLimit,
-            isPrivate,
-            roomPassword: isPrivate ? roomPassword : null
-        });
-        // Envoi des paramètres au serveur ici
+        // console.log({
+        //     roomName,
+        //     playerName,
+        //     gravityLevel,
+        //     invisiblePieces,
+        //     timeLimit,
+        //     playerLimit,
+        //     isPrivate,
+        //     roomPassword: isPrivate ? roomPassword : null
+        // });
+		// Create room
+		socket.emit("create_room", {
+			roomName,
+			playerName,
+			gravityLevel,
+			invisiblePieces,
+			timeLimit,
+			playerLimit,
+			isPrivate,
+			roomPassword: isPrivate ? roomPassword : null
+		}, (response) => {
+            if (response.success) {
+                navigate(`/${roomName}/${playerName}`);
+				setErrorMessage("");
+			}
+            else {
+                console.error("Server error :", response.message);
+				setErrorMessage(response.message || "An error occurred while creating the room.");
+            }
+        })
     };
 
     return (
-        <div className="w-screen min-h-screen flex flex-col hidden-scrollbar relative">
+        <div className="w-full min-h-screen flex flex-col hidden-scrollbar relative">
             {/* Background color */}
             <div className="absolute top-0 inset-0 -z-10 bg-arcade-black"></div>
 
@@ -49,7 +72,7 @@ export default function MultiParam() {
                 <h1 className="text-2xl md:text-5xl font-bold text-neon-red font-arcade text-center animate-flicker">red-tetris</h1>
             </div>
 
-            <main className="flex flex-col items-center justify-center w-full min-h-screen overflow-hidden">
+            <main className="flex flex-col items-center justify-center w-full min-h-screen overflow-hidden pt-40 pb-20">
                 <Link to="/rooms" className="absolute top-0 left-0 w-36 h-12 flex items-center justify-center rounded-br-lg bg-arcade-black border-b-4 border-r-4 border-neon-blue font-arcade text-base text-white animate-slide_in_right transition-all duration-200 hover:scale-105">
                 <FontAwesomeIcon icon={faCircleLeft} className="text-neon-blue text-lg mr-2" /> return</Link>
 
@@ -63,6 +86,7 @@ export default function MultiParam() {
                                 <input
                                     type="text"
                                     value={roomName}
+									maxLength={16}
                                     onChange={(e) => setRoomName(e.target.value)}
                                     className="w-full px-4 py-2 bg-arcade-black border-2 border-neon-purple rounded-lg text-neon-red font-arcade focus:outline-none focus:border-neon-cyan"
                                     required
@@ -75,6 +99,7 @@ export default function MultiParam() {
                                 <input
                                     type="text"
                                     value={playerName}
+									maxLength={16}
                                     onChange={(e) => setPlayerName(e.target.value)}
                                     className="w-full px-4 py-2 bg-arcade-black border-2 border-neon-purple rounded-lg text-neon-red font-arcade focus:outline-none focus:border-neon-cyan"
                                     required
@@ -106,12 +131,7 @@ export default function MultiParam() {
                             <div className="mb-6 w-full">
                                 <label className="block text-neon-cyan font-arcade text-lg mb-2">Invisible Pieces</label>
                                 <label className="relative inline-flex items-center cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        checked={invisiblePieces}
-                                        onChange={() => setInvisiblePieces(!invisiblePieces)}
-                                        className="sr-only peer"
-                                    />
+                                    <input type="checkbox" checked={invisiblePieces} onChange={() => setInvisiblePieces(!invisiblePieces)} className="sr-only peer"/>
                                     <div className="w-11 h-6 bg-arcade-purple border-2 border-neon-magenta rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-neon-cyan after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-neon-cyan after:border-neon-cyan after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neon-red peer-checked:border-neon-red"></div>
                                 </label>
                             </div>
@@ -132,13 +152,7 @@ export default function MultiParam() {
                                     {timeOptions.map((minutes, index) => {
                                         const position = (index / (timeOptions.length - 1)) * 100;
                                         return (
-                                            <span
-                                                key={minutes}
-                                                className="absolute text-neon-red font-arcade text-sm"
-                                                style={{ left: `${position}%`, transform: 'translateX(-50%)' }}
-                                            >
-                                                {minutes}
-                                            </span>
+                                            <span key={minutes} className="absolute text-neon-red font-arcade text-sm" style={{ left: `${position}%`, transform: 'translateX(-50%)' }}>{minutes}</span>
                                         );
                                     })}
                                 </div>
@@ -161,13 +175,7 @@ export default function MultiParam() {
                                     {playerLimitOptions.map((limit, index) => {
                                         const position = (index / (playerLimitOptions.length - 1)) * 100;
                                         return (
-                                            <span
-                                                key={limit}
-                                                className="absolute text-neon-red font-arcade text-sm"
-                                                style={{ left: `${position}%`, transform: 'translateX(-50%)' }}
-                                            >
-                                                {limit}
-                                            </span>
+                                            <span key={limit} className="absolute text-neon-red font-arcade text-sm" style={{ left: `${position}%`, transform: 'translateX(-50%)' }}>{limit}</span>
                                         );
                                     })}
                                 </div>
@@ -178,12 +186,7 @@ export default function MultiParam() {
                             <div className="mb-6 w-full">
                                 <label className="block text-neon-cyan font-arcade text-lg mb-2">Room Visibility</label>
                                 <label className="relative inline-flex items-center cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        checked={isPrivate}
-                                        onChange={() => setIsPrivate(!isPrivate)}
-                                        className="sr-only peer"
-                                    />
+                                    <input type="checkbox" checked={isPrivate} onChange={() => setIsPrivate(!isPrivate)} className="sr-only peer"/>
                                     <div className="w-11 h-6 bg-arcade-purple border-2 border-neon-magenta rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-neon-cyan after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-neon-cyan after:border-neon-cyan after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neon-red peer-checked:border-neon-red"></div>
                                     <span className="ml-3 text-neon-cyan font-arcade">
                                         {isPrivate ? (
@@ -209,13 +212,12 @@ export default function MultiParam() {
                             </div>
 
                             {/* Bouton Create Room */}
-                            <button
-                                type="submit"
-                                className="mt-6 px-6 py-3 bg-arcade-purple text-neon-cyan font-arcade text-xl border-4 border-neon-purple rounded-lg shadow-[0_0_10px_#00F7FF,0_0_20px_#9C27B0] animate-arcade-pulse transition-all duration-200 hover:scale-105 hover:shadow-[0_0_15px_#00F7FF,0_0_25px_#9C27B0] active:translate-y-1"
-                            >
-                                <FontAwesomeIcon icon={faPlus} className="text-neon-cyan text-2xl mr-3" />
-                                Create Room
-                            </button>
+                            <button type="submit" className="mt-6 px-6 py-3 bg-arcade-purple text-neon-cyan font-arcade text-xl border-4 border-neon-purple rounded-lg shadow-[0_0_10px_#00F7FF,0_0_20px_#9C27B0] animate-arcade-pulse transition-all duration-200 hover:scale-105 hover:shadow-[0_0_15px_#00F7FF,0_0_25px_#9C27B0] active:translate-y-1">
+                            <FontAwesomeIcon icon={faPlus} className="text-neon-cyan text-2xl mr-3"/>Create Room</button>
+
+							{errorMessage && (
+								<p className="mt-4 text-neon-red font-arcade text-center text-lg animate-pulse">{errorMessage}</p>
+							)}
                         </form>
                     </div>
                 </div>

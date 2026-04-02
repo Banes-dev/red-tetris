@@ -18,39 +18,66 @@ import Player from "../game/Player.js"
 
 export function registerGameSocket(io, socket)
 {
-	// récupérer la liste des rooms
+	// Get list of active rooms
 	socket.on("get_rooms", () => {
 		const rooms = roomManager.getRoomsList()
 		socket.emit("rooms_list", rooms)
 	})
 
-	// rejoindre une room
-	socket.on("join_room", ({roomId, playerName}) => {
-		let game = roomManager.getRoom(roomId)
-
-		if (!game)
-			game = roomManager.createRoom(roomId)
-
-		const player = new Player(socket.id, playerName)
-		const success = game.addPlayer(player)
-
-		if (!success)
+	// Create room
+	socket.on("create_room", (data, callback) => {
+		const {roomName, playerName, gravityLevel, invisiblePieces, timeLimit, playerLimit, isPrivate, roomPassword} = data
+		const existing = roomManager.getRoom(roomName)
+		if (existing)
 		{
-			socket.emit("join_error", "Game already started")
+			callback({success: false, message: "Room already exists"});
 			return
 		}
 
+		const game = roomManager.createRoom({roomName, gravityLevel, invisiblePieces, timeLimit, playerLimit, isPrivate, roomPassword})
+		// const player = new Player(socket.id, playerName)
+		// game.addPlayer(player)
+
+		// socket.join(roomName)
+		// socket.emit("joined_room", {roomName, playerId: socket.id, isLeader: true})
+		// io.to(roomName).emit("room_update", {players: game.players})
+
+		callback({success: true});
+	})
+
+	// Join room
+	socket.on("join_room", ({roomId, playerName, password}, callback) => {
+		const game = roomManager.getRoom(roomId)
+
+		if (!game)
+		{
+			callback({success: false, message: "Room does not exist"});
+			return
+		}
+		if (game.status !== "waiting")
+		{
+			callback({success: false, message: "Game already started"});
+			return
+		}
+		if (game.players.length >= game.playerLimit)
+		{
+			callback({success: false, message: "Room is full"});
+			return
+		}
+		if (game.isPrivate && game.password !== password)
+		{
+			callback({success: false, message: "Wrong password"});
+			return
+		}
+
+		const player = new Player(socket.id, playerName)
+		game.addPlayer(player)
+
 		socket.join(roomId)
+		socket.emit("joined_room", {roomId, playerId: socket.id, isLeader: false})
+		io.to(roomId).emit("room_update", {players: game.players})
 
-		socket.emit("joined_room", {
-			roomId,
-			playerId: socket.id
-		})
-
-		io.to(roomId).emit("room_update", {
-			players: game.players
-		})
-
-		console.log("rooms:", roomManager.getRoomsList())
+		// console.log("rooms:", roomManager.getRoomsList())
+		callback({success: true});
 	})
 }

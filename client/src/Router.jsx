@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import SoloParam from "./pages/SoloParam";
 import Rooms from "./pages/Rooms"
 import MultiParam from "./pages/MultiParam";
+import GamePage from "./game/GamePage";
 import GameGrid from "./game/GameGrid";
 
 export default function Router()
@@ -14,7 +15,8 @@ export default function Router()
 				<Route path="/solo_param" element={<SoloParam/>}/>
 				<Route path="/rooms" element={<Rooms/>}/>
 				<Route path="/multi_param" element={<MultiParam/>}/>
-				<Route path="/game" element={<GameGrid/>}/>
+				<Route path="/:roomId/:playerName" element={<GamePage/>}/>
+				{/* <Route path="/game" element={<GameGrid/>}/> */}
 			{/* </Route> */}
 		</Routes>
 	);

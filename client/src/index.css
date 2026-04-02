@@ -3,6 +3,7 @@
 
 @import "tailwindcss";
 
+/* Color & Font */
 @theme {
 	--color-arcade-black: #0A0412;
 	--color-arcade-purple: #1A0B2E;
@@ -87,25 +88,40 @@
 }
 
 
-/* Stylisation du curseur (thumb) de la progress bar */
+/* Cursor of the progress bar */
 input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #00F7FF; /* Couleur neon-red */
-  cursor: pointer;
-  border: 2px solid #FF00FF; /* Bordure neon-cyan pour le contraste */
-  box-shadow: 0 0 5px rgba(255, 0, 102, 0.7);
+	-webkit-appearance: none;
+	appearance: none;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	background: #00F7FF;
+	cursor: pointer;
+	border: 2px solid #FF00FF;
+	box-shadow: 0 0 5px rgba(255, 0, 102, 0.7);
+}
+input[type="range"]::-moz-range-thumb {
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	background: #00F7FF;
+	cursor: pointer;
+	border: 2px solid #FF00FF;
+	box-shadow: 0 0 5px rgba(255, 0, 102, 0.7);
 }
 
-input[type="range"]::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #00F7FF;
-  cursor: pointer;
-  border: 2px solid #FF00FF;
-  box-shadow: 0 0 5px rgba(255, 0, 102, 0.7);
+/* Scrollbar disable */
+@layer base {
+	html, body {
+		@apply antialiased; /* Optionnal, just more clean */
+		
+		scrollbar-width: none; /* Firefox */
+		-ms-overflow-style: none; /* IE & Edge */
+	}
+
+	/* Chrome, Safari & Opera */
+	html::-webkit-scrollbar,
+	body::-webkit-scrollbar {
+		display: none;
+	}
 }

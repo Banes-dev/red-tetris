@@ -23,10 +23,10 @@ const io = new Server(server, {
 })
 
 io.on("connection", (socket) => {
-	console.log("player connected :", socket.id)
+	console.log("socket connected :", socket.id)
 	registerGameSocket(io, socket)
 	socket.on("disconnect", () => {
-		console.log("player disconnected :", socket.id)
+		console.log("socket disconnected :", socket.id)
 	})
 })
 

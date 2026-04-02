@@ -1,9 +1,17 @@
-function Game(id)
+function Game({id, gravityLevel, invisiblePieces, timeLimit, playerLimit, isPrivate, password})
 {
 	this.id = id
 	this.players = []
 	this.status = "waiting"
 	this.leader = null
+
+	// settings
+	this.gravityLevel = gravityLevel
+	this.invisiblePieces = invisiblePieces
+	this.timeLimit = timeLimit
+	this.playerLimit = playerLimit
+	this.isPrivate = isPrivate
+	this.password = password
 }
 
 Game.prototype.addPlayer = function(player)
