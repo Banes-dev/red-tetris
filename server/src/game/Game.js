@@ -27,4 +27,9 @@ Game.prototype.addPlayer = function(player)
 	return true
 }
 
+Game.prototype.removePlayer = function(playerId)
+{
+	this.players = this.players.filter(p => p.id !== playerId)
+}
+
 export default Game

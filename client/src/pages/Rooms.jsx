@@ -18,21 +18,26 @@ export default function Rooms()
 	const rooms = useSelector(state => state.game.rooms)
 
 	useEffect(() => {
-		socket.emit("get_rooms")
+		socket.emit("get_rooms");
 
-		socket.on("rooms_list", (data) => {
-			dispatch(setRooms(data))
-		})
+		const handleRoomsList = (data) => {
+			console.log("Liste des salles mise à jour :", data);
+			dispatch(setRooms(data));
+		};
 
-		socket.on("room_update", () => {
-			socket.emit("get_rooms")
-		})
+		const handleRoomUpdate = () => {
+			console.log("Mise à jour de salle détectée, rafraîchissement...");
+			socket.emit("get_rooms");
+		};
+
+		socket.on("rooms_list", handleRoomsList);
+		socket.on("room_update", handleRoomUpdate);
 
 		return () => {
-			socket.off("rooms_list")
-			socket.off("room_update")
-		}
-	}, [dispatch])
+			socket.off("rooms_list", handleRoomsList);
+			socket.off("room_update", handleRoomUpdate);
+		};
+	}, [dispatch]);
 
 	const handleJoinRoom = (room) => {
         setSelectedRoom(room);
@@ -40,8 +45,8 @@ export default function Rooms()
     };
 
     const handleSubmit = (data) => {
-        const { playerName, password } = data;
-        const payload = { roomId: selectedRoom.id, playerName };
+        const {playerName, password} = data;
+        const payload = {roomId: selectedRoom.id, playerName};
         if (selectedRoom.isPrivate)
 			payload.password = password;
 

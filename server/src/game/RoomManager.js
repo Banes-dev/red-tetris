@@ -5,16 +5,6 @@ function RoomManager()
 	this.rooms = new Map()
 }
 
-// RoomManager.prototype.createRoom = function(roomId)
-// {
-// 	if (this.rooms.has(roomId))
-// 		return this.rooms.get(roomId)
-
-// 	const game = new Game(roomId)
-// 	this.rooms.set(roomId, game)
-
-// 	return game
-// }
 RoomManager.prototype.createRoom = function(config)
 {
 	if (this.rooms.has(config.roomName))
@@ -51,6 +41,21 @@ RoomManager.prototype.getRoomsList = function()
 		invisible: game.invisiblePieces,
 		timeLimit: game.timeLimit
 	}))
+}
+
+RoomManager.prototype.findGameByPlayer = function(playerId)
+{
+	for (const game of this.rooms.values())
+	{
+		if (game.players.find(p => p.id === playerId))
+			return game
+	}
+	return null
+}
+
+RoomManager.prototype.deleteRoom = function(roomId)
+{
+	this.rooms.delete(roomId)
 }
 
 export const roomManager = new RoomManager()

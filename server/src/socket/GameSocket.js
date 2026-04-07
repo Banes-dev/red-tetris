@@ -35,12 +35,12 @@ export function registerGameSocket(io, socket)
 		}
 
 		const game = roomManager.createRoom({roomName, gravityLevel, invisiblePieces, timeLimit, playerLimit, isPrivate, roomPassword})
-		// const player = new Player(socket.id, playerName)
-		// game.addPlayer(player)
+		const player = new Player(socket.id, playerName)
+		game.addPlayer(player)
 
-		// socket.join(roomName)
-		// socket.emit("joined_room", {roomName, playerId: socket.id, isLeader: true})
-		// io.to(roomName).emit("room_update", {players: game.players})
+		socket.join(roomName)
+		socket.emit("joined_room", {roomName, playerId: socket.id, isLeader: true})
+		io.emit("room_update", {players: game.players})
 
 		callback({success: true});
 	})
@@ -75,9 +75,73 @@ export function registerGameSocket(io, socket)
 
 		socket.join(roomId)
 		socket.emit("joined_room", {roomId, playerId: socket.id, isLeader: false})
-		io.to(roomId).emit("room_update", {players: game.players})
+		io.emit("room_update", {
+			players: game.players,
+			// leader: game.leader,
+			status: game.status
+		})
 
 		// console.log("rooms:", roomManager.getRoomsList())
 		callback({success: true});
+	})
+
+	// Disconnect player
+	socket.on("disconnect", () => {
+		const game = roomManager.findGameByPlayer(socket.id)
+		if (!game)
+			return
+
+		game.removePlayer(socket.id)
+		console.log(game.players.length)
+
+		// si plus de joueurs → supprimer la room
+		if (game.players.length === 0)
+		{
+			roomManager.deleteRoom(game.id)
+			io.emit("room_update", {
+				players: game.players,
+				// leader: game.leader,
+				status: game.status
+			})
+			return
+		}
+
+		// si leader parti → nouveau leader
+		if (game.leader === socket.id)
+			game.leader = game.players[0].id
+
+		io.emit("room_update", {
+			players: game.players,
+			// leader: game.leader,
+			status: game.status
+		})
+
+		console.log("rooms :", roomManager.getRoomsList())
+	})
+
+	// Start game
+	socket.on("start_game", ({roomId}) => {
+		const game = roomManager.getRoom(roomId)
+		if (!game)
+			return
+
+		// seul leader
+		if (game.leader !== socket.id)
+		{
+			socket.emit("start_error", "Not leader")
+			return
+		}
+		if (game.players.length === 0)
+		{
+			socket.emit("start_error", "No players")
+			return
+		}
+		game.status = "playing"
+
+		io.to(roomId).emit("game_started", {
+			roomId
+		})
+
+		console.log("game started :", roomId)
 	})
 }

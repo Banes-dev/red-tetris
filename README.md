@@ -15,8 +15,7 @@
 # Server
 
 To do :
-- Systeme de deconexion quand on quitte la room
-- Systeme de leader qui permet de lancer le jeu
+- Systeme de leader qui permet de lancer le jeu (recuperer info de la room/game dans la GamePage)
 
 
 
