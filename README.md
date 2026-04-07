@@ -15,7 +15,6 @@
 # Server
 
 To do :
-- Dialog input mdp quand room private
 - Systeme de deconexion quand on quitte la room
 - Systeme de leader qui permet de lancer le jeu
 

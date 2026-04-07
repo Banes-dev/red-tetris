@@ -3,6 +3,7 @@ import {useDispatch, useSelector} from "react-redux"
 import {Link, useNavigate} from "react-router-dom";
 import {socket} from "../socket/socket"
 import {setRooms} from "../store/game_slice"
+import InputForm from "../components/InputForm";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCircleLeft, faPlus, faLock, faClock, faEyeSlash, faWeightHanging} from '@fortawesome/free-solid-svg-icons'
 
@@ -10,6 +11,7 @@ export default function Rooms()
 {
 	const navigate = useNavigate();
 	const [errorMessage, setErrorMessage] = useState('');
+	const [selectedRoom, setSelectedRoom] = useState(null);
 
 	// Get rooms list
 	const dispatch = useDispatch()
@@ -32,17 +34,28 @@ export default function Rooms()
 		}
 	}, [dispatch])
 
-	const JoinRoom = (roomId, playerName) => {
-		socket.emit("join_room", {roomId, playerName}, (response) => {
-			if (response.success) {
-				navigate(`/${roomId}/${playerName}`);
-				setErrorMessage("");
-			} else {
-				console.error("Server error :", response.message);
-				setErrorMessage(response.message || "An error occurred while joining the room.");
-			}
-		});
-	};
+	const handleJoinRoom = (room) => {
+        setSelectedRoom(room);
+        setErrorMessage("");
+    };
+
+    const handleSubmit = (data) => {
+        const { playerName, password } = data;
+        const payload = { roomId: selectedRoom.id, playerName };
+        if (selectedRoom.isPrivate)
+			payload.password = password;
+
+        socket.emit("join_room", payload, (response) => {
+            if (response.success) {
+                navigate(`/${selectedRoom.id}/${playerName}`);
+                setErrorMessage("");
+                setSelectedRoom(null);
+            } else {
+                setErrorMessage(response.message || "An error occurred while joining the room.");
+				setSelectedRoom(null);
+            }
+        });
+    };
 
 	return (
         <div className="w-screen min-h-screen flex flex-col hidden-scrollbar relative">
@@ -81,8 +94,7 @@ export default function Rooms()
 								<p className="mt-4 text-neon-red font-arcade text-center text-lg animate-pulse">{errorMessage}</p>
 							)}
 							{rooms.map((room) => (
-								// to={`/${room.id}/Banes`}
-								<button onClick={() => JoinRoom(room.id, "Banes")} key={room.id} className="w-full p-3 mt-3 mb-3 bg-arcade-purple/30 border-2 border-neon-purple rounded-lg hover:shadow-[0_0_10px_#00F7FF,0_0_20px_#9C27B0] flex flex-col md:flex-row md:items-center md:justify-between transition-all duration-200 hover:scale-101">
+								<button onClick={() => handleJoinRoom(room)} key={room.id} className="w-full p-3 mt-3 mb-3 bg-arcade-purple/30 border-2 border-neon-purple rounded-lg hover:shadow-[0_0_10px_#00F7FF,0_0_20px_#9C27B0] flex flex-col md:flex-row md:items-center md:justify-between transition-all duration-200 hover:scale-101">
 									<div className="flex items-center mb-2 md:mb-0">
 										{room.isPrivate && <FontAwesomeIcon icon={faLock} className="text-neon-cyan text-lg mr-2"/>}
 										<span className="text-neon-cyan font-arcade md:text-lg mr-6 md:mr-8 truncate">{room.id}</span>
@@ -108,6 +120,29 @@ export default function Rooms()
 					</div>
 				</div>
 			</main>
+			{selectedRoom && (
+                <InputForm
+                    title={`Join ${selectedRoom.id}`}
+                    fields={[
+                        {
+                            name: "playerName",
+                            label: "Player Name",
+                            type: "text",
+                            initialValue: "Player",
+                            placeholder: "Enter your player name",
+                        },
+                        ...(selectedRoom.isPrivate ? [{
+                            name: "password",
+                            label: "Room Password",
+                            type: "password",
+                            placeholder: "Enter room password",
+                            icon: faLock,
+                        }] : []),
+                    ]}
+                    onSubmit={handleSubmit}
+                    onCancel={() => setSelectedRoom(null)}
+                />
+            )}
         </div>
     );
 }
