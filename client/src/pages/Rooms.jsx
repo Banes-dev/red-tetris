@@ -2,7 +2,7 @@ import {useEffect, useState} from "react"
 import {useDispatch, useSelector} from "react-redux"
 import {Link, useNavigate} from "react-router-dom";
 import {socket} from "../socket/socket"
-import {setRooms} from "../store/game_slice"
+import {setRooms, setState, setMe, setRoomId} from "../store/game_slice"
 import InputForm from "../components/InputForm";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCircleLeft, faPlus, faLock, faClock, faEyeSlash, faWeightHanging} from '@fortawesome/free-solid-svg-icons'
@@ -21,21 +21,19 @@ export default function Rooms()
 		socket.emit("get_rooms");
 
 		const handleRoomsList = (data) => {
-			console.log("Liste des salles mise à jour :", data);
 			dispatch(setRooms(data));
 		};
 
-		const handleRoomUpdate = () => {
-			console.log("Mise à jour de salle détectée, rafraîchissement...");
-			socket.emit("get_rooms");
-		};
+		// const handleRoomUpdate = () => {
+		// 	socket.emit("get_rooms");
+		// };
 
 		socket.on("rooms_list", handleRoomsList);
-		socket.on("room_update", handleRoomUpdate);
+		// socket.on("room_update", handleRoomUpdate);
 
 		return () => {
 			socket.off("rooms_list", handleRoomsList);
-			socket.off("room_update", handleRoomUpdate);
+			// socket.off("room_update", handleRoomUpdate);
 		};
 	}, [dispatch]);
 
@@ -52,6 +50,9 @@ export default function Rooms()
 
         socket.emit("join_room", payload, (response) => {
             if (response.success) {
+				dispatch(setState({players: response.players, leader: response.leader, status: response.status}))
+				dispatch(setMe(socket.id))
+				dispatch(setRoomId(selectedRoom.id))
                 navigate(`/${selectedRoom.id}/${playerName}`);
                 setErrorMessage("");
                 setSelectedRoom(null);

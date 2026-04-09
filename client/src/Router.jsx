@@ -15,7 +15,7 @@ export default function Router()
 				<Route path="/solo_param" element={<SoloParam/>}/>
 				<Route path="/rooms" element={<Rooms/>}/>
 				<Route path="/multi_param" element={<MultiParam/>}/>
-				<Route path="/:roomId/:playerName" element={<GamePage/>}/>
+				<Route path="/:paramRoomId/:paramPlayerName" element={<GamePage/>}/>
 				{/* <Route path="/game" element={<GameGrid/>}/> */}
 			{/* </Route> */}
 		</Routes>

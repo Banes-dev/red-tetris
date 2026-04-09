@@ -3,7 +3,10 @@ import {createSlice} from "@reduxjs/toolkit"
 const initialState = {
 	rooms: [],
 	players: [],
-	me: null
+	me: null,
+	roomId: null,
+	leader: null,
+	status: "waiting"
 }
 
 const gameSlice = createSlice({
@@ -15,12 +18,17 @@ const gameSlice = createSlice({
 		},
 		setState: (state, action) => {
 			state.players = action.payload.players
+			state.leader = action.payload.leader
+			state.status = action.payload.status
 		},
 		setMe: (state, action) => {
 			state.me = action.payload
+		},
+		setRoomId: (state, action) => {
+			state.roomId = action.payload
 		}
 	}
 })
 
-export const {setRooms, setState, setMe} = gameSlice.actions
+export const {setRooms, setState, setMe, setRoomId} = gameSlice.actions
 export default gameSlice.reducer

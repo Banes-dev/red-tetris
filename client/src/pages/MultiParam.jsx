@@ -1,10 +1,13 @@
 import {useState} from "react";
+import {useDispatch} from "react-redux"
 import {Link, useNavigate} from "react-router-dom";
+import {setState, setMe, setRoomId} from "../store/game_slice"
 import {socket} from "../socket/socket"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleLeft, faPlus, faLock, faLockOpen} from "@fortawesome/free-solid-svg-icons";
 
 export default function MultiParam() {
+	const dispatch = useDispatch()
 	const navigate = useNavigate();
 	const [errorMessage, setErrorMessage] = useState('');
 
@@ -45,6 +48,9 @@ export default function MultiParam() {
 			roomPassword: isPrivate ? roomPassword : null
 		}, (response) => {
             if (response.success) {
+				dispatch(setState({players: response.players, leader: response.leader, status: response.status}))
+				dispatch(setMe(socket.id))
+				dispatch(setRoomId(roomName))
                 navigate(`/${roomName}/${playerName}`);
 				setErrorMessage("");
 			}

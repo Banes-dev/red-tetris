@@ -39,10 +39,14 @@ export function registerGameSocket(io, socket)
 		game.addPlayer(player)
 
 		socket.join(roomName)
-		socket.emit("joined_room", {roomName, playerId: socket.id, isLeader: true})
-		io.emit("room_update", {players: game.players})
+		io.to(roomName).emit("room_update", {
+			players: game.players,
+			leader: game.leader,
+			status: game.status
+		})
+		io.emit("rooms_list", roomManager.getRoomsList())
 
-		callback({success: true});
+		callback({success: true, players: game.players, leader: game.leader, status: game.status});
 	})
 
 	// Join room
@@ -52,6 +56,23 @@ export function registerGameSocket(io, socket)
 		if (!game)
 		{
 			callback({success: false, message: "Room does not exist"});
+			return
+		}
+		// Reconnect
+		let existingPlayer = game.players.find(p => p.name === playerName)
+		if (existingPlayer)
+		{
+			// update socket.id
+			if (existingPlayer.id == game.leader)
+				game.leader = socket.id
+			existingPlayer.id = socket.id
+			socket.join(roomId)
+			io.to(roomId).emit("room_update", {
+				players: game.players,
+				leader: game.leader,
+				status: game.status
+			})
+			callback({success: true, reconnected: true, players: game.players, leader: game.leader, status: game.status})
 			return
 		}
 		if (game.status !== "waiting")
@@ -74,15 +95,15 @@ export function registerGameSocket(io, socket)
 		game.addPlayer(player)
 
 		socket.join(roomId)
-		socket.emit("joined_room", {roomId, playerId: socket.id, isLeader: false})
-		io.emit("room_update", {
+		io.to(roomId).emit("room_update", {
 			players: game.players,
-			// leader: game.leader,
+			leader: game.leader,
 			status: game.status
 		})
+		io.emit("rooms_list", roomManager.getRoomsList())
 
 		// console.log("rooms:", roomManager.getRoomsList())
-		callback({success: true});
+		callback({success: true, players: game.players, leader: game.leader, status: game.status});
 	})
 
 	// Disconnect player
@@ -91,36 +112,42 @@ export function registerGameSocket(io, socket)
 		if (!game)
 			return
 
-		game.removePlayer(socket.id)
-		console.log(game.players.length)
+		const player = game.players.find(p => p.id === socket.id)
+		if (!player)
+			return
 
-		// si plus de joueurs → supprimer la room
-		if (game.players.length === 0)
-		{
-			roomManager.deleteRoom(game.id)
-			io.emit("room_update", {
+		// wait before disconnect, check if reconnect
+		setTimeout(() => {
+			// si le joueur s'est reconnecté entre temps → ne rien faire
+			const stillThere = game.players.find(p => p.name === player.name && p.id !== socket.id)
+			if (stillThere)
+				return
+
+			game.removePlayer(socket.id)
+
+			// si plus de joueurs → supprimer la room
+			if (game.players.length === 0)
+			{
+				roomManager.deleteRoom(game.id)
+				io.emit("rooms_list", roomManager.getRoomsList())
+				return
+			}
+
+			// si leader parti → nouveau leader
+			if (game.leader === socket.id)
+				game.leader = game.players[0].id
+
+			io.to(game.id).emit("room_update", {
 				players: game.players,
-				// leader: game.leader,
+				leader: game.leader,
 				status: game.status
 			})
-			return
-		}
-
-		// si leader parti → nouveau leader
-		if (game.leader === socket.id)
-			game.leader = game.players[0].id
-
-		io.emit("room_update", {
-			players: game.players,
-			// leader: game.leader,
-			status: game.status
-		})
-
-		console.log("rooms :", roomManager.getRoomsList())
+			io.emit("rooms_list", roomManager.getRoomsList())
+		}, 2000) // 2s delay
 	})
 
 	// Start game
-	socket.on("start_game", ({roomId}) => {
+	socket.on("start_game", ({roomId}, callback) => {
 		const game = roomManager.getRoom(roomId)
 		if (!game)
 			return
@@ -128,20 +155,23 @@ export function registerGameSocket(io, socket)
 		// seul leader
 		if (game.leader !== socket.id)
 		{
-			socket.emit("start_error", "Not leader")
+			callback({success: false, message: "You are not the leader"});
 			return
 		}
 		if (game.players.length === 0)
 		{
-			socket.emit("start_error", "No players")
+			callback({success: false, message: "Not enought players"});
 			return
 		}
 		game.status = "playing"
-
-		io.to(roomId).emit("game_started", {
-			roomId
+		io.to(roomId).emit("game_started", {roomId})
+		io.to(roomId).emit("room_update", {
+			players: game.players,
+			leader: game.leader,
+			status: game.status
 		})
 
-		console.log("game started :", roomId)
+		console.log("game started : ", roomId)
+		callback({success: true});
 	})
 }
