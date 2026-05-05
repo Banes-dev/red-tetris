@@ -164,14 +164,21 @@ export function registerGameSocket(io, socket)
 			return
 		}
 		game.status = "playing"
-		io.to(roomId).emit("game_started", {roomId})
-		io.to(roomId).emit("room_update", {
-			players: game.players,
-			leader: game.leader,
-			status: game.status
-		})
+		game.fillQueue()
+		io.to(roomId).emit("game_started", {roomId, seed: game.seed, pieces: game.pieceQueue.slice(0, 10)})
+		io.to(roomId).emit("room_update", {players: game.players, leader: game.leader, status: game.status})
 
 		console.log("game started : ", roomId)
 		callback({success: true});
+	})
+
+	// Request piece by client
+	socket.on("request_pieces", ({roomId}) => {
+		const game = roomManager.getRoom(roomId)
+		if (!game)
+			return
+
+		const pieces = game.getNextPieces(5)
+		socket.emit("pieces", pieces)
 	})
 }

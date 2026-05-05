@@ -16,6 +16,7 @@
 
 To do :
 - Systeme de leader qui permet de lancer le jeu (recuperer info de la room/game dans la GamePage)
+- Bug joueur pas deco quand retour ? (plusieurs f5 pour corriger sa)
 
 
 

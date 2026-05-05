@@ -6,7 +6,8 @@ const initialState = {
 	me: null,
 	roomId: null,
 	leader: null,
-	status: "waiting"
+	status: "waiting",
+	pieces: []
 }
 
 const gameSlice = createSlice({
@@ -26,6 +27,9 @@ const gameSlice = createSlice({
 		},
 		setRoomId: (state, action) => {
 			state.roomId = action.payload
+		},
+		setPieces: (state, action) => {
+			state.pieces = [...state.pieces, ...action.payload]
 		}
 	}
 })
