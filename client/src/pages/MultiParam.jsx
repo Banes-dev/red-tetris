@@ -6,7 +6,8 @@ import {socket} from "../socket/socket"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleLeft, faPlus, faLock, faLockOpen} from "@fortawesome/free-solid-svg-icons";
 
-export default function MultiParam() {
+export default function MultiParam()
+{
 	const dispatch = useDispatch()
 	const navigate = useNavigate();
 	const [errorMessage, setErrorMessage] = useState('');

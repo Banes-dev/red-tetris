@@ -3,8 +3,8 @@ import Home from "./pages/Home";
 import SoloParam from "./pages/SoloParam";
 import Rooms from "./pages/Rooms"
 import MultiParam from "./pages/MultiParam";
-import GamePage from "./game/GamePage";
-import GameGrid from "./game/GameGrid";
+import GamePage from "./games/GamePage";
+// import GameGrid from "./game/GameGrid";
 
 export default function Router()
 {

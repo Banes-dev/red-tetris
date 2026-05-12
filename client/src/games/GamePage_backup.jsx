@@ -1,13 +1,18 @@
 import {useState, useEffect} from "react"
 import {useParams} from "react-router-dom"
 import {useSelector, useDispatch} from "react-redux"
-import {setState, setMe, setRoomId, setPieces} from "../store/game_slice"
+import {setState, setMe, setRoomId, setPieces, setBoard, setCurrentPiece} from "../store/game_slice"
+import {createBoard} from "./game/board"
+import {PIECES} from "./game/pieces"
+import GameGrid from "./components/GameGrid"
 import {socket} from "../socket/socket"
 import {Link} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {faCircleLeft, faPlay, faCrown} from "@fortawesome/free-solid-svg-icons"
+import Gravity from "./hooks/gravity"
 
-export default function GamePage() {
+export default function GamePage()
+{
 	const dispatch = useDispatch()
 	const [errorMessage, setErrorMessage] = useState('');
 
@@ -18,6 +23,7 @@ export default function GamePage() {
 	const status = useSelector(state => state.game.status)
 	const players = useSelector(state => state.game.players)
 	const roomId = useSelector(state => state.game.roomId)
+	const currentPiece = useSelector(state => state.game.currentPiece)
 
 	useEffect(() => {
 		// reconnect
@@ -37,7 +43,15 @@ export default function GamePage() {
 
 		socket.on("game_started", ({pieces}) => {
 			dispatch(setPieces(pieces))
-			console.log("game started")
+			dispatch(setBoard(createBoard()))
+			const type = pieces[0]
+			dispatch(setCurrentPiece({
+				type,
+				shape: PIECES[type],
+				x: 3,
+				y: 0
+			}))
+			console.log("game started", pieces)
 		})
 
 		socket.on("pieces", (pieces) => {
@@ -53,11 +67,57 @@ export default function GamePage() {
 
 	useEffect(() => {
 		const interval = setInterval(() => {
-			socket.emit("request_pieces", { roomId })
+			socket.emit("request_pieces", {roomId})
 		}, 2000)
 
 		return () => clearInterval(interval)
 	}, [roomId])
+
+	// Gravity
+	Gravity()
+	// useEffect(() => {
+	// 	if (!currentPiece || status !== "playing")
+	// 		return
+	// 	const interval = setInterval(() => {
+	// 		dispatch(setCurrentPiece({...currentPiece, y: currentPiece.y + 1}))
+	// 	}, 1000)
+
+	// 	return () => clearInterval(interval)
+	// }, [currentPiece, status])
+
+	// Keyboard control
+	Keyboard()
+	// useEffect(() => {
+	// 	const handleKeyDown = (e) => {
+	// 		if (!currentPiece)
+	// 			return
+	// 		switch (e.key){
+	// 			case "ArrowLeft":
+	// 				dispatch(setCurrentPiece({
+	// 					...currentPiece,
+	// 					x: currentPiece.x - 1
+	// 				}))
+	// 				break
+	// 			case "ArrowRight":
+	// 				dispatch(setCurrentPiece({
+	// 					...currentPiece,
+	// 					x: currentPiece.x + 1
+	// 				}))
+	// 				break
+	// 			case "ArrowDown":
+	// 				dispatch(setCurrentPiece({
+	// 					...currentPiece,
+	// 					y: currentPiece.y + 1
+	// 				}))
+	// 				break
+	// 		}
+	// 	}
+	// 	window.addEventListener("keydown", handleKeyDown)
+
+	// 	return () => {
+	// 		window.removeEventListener("keydown", handleKeyDown)
+	// 	}
+	// }, [currentPiece])
 
 	const startGame = () => {
 		socket.emit("start_game", {roomId}, (response) => {
@@ -120,12 +180,12 @@ export default function GamePage() {
 					<div className="flex flex-col items-center justify-center w-10/12 md:w-7/12 h-auto py-8 rounded-lg bg-arcade-black border-4 border-neon-yellow animate-slide_in_up">
                         {status === "waiting" ? (
                             <>
-                                {/* Room name (aligné à gauche) */}
+                                {/* Room name */}
                                 <div className="w-full flex justify-center md:justify-start px-4 md:px-6 mb-4 md:mb-6">
                                     <h2 className="text-2xl md:text-3xl font-bold text-neon-red font-arcade">{roomId}</h2>
                                 </div>
 
-                                {/* Liste des joueurs */}
+                                {/* Players list */}
                                 <div className="w-3/4 md:w-full max-w-sm md:max-w-md mb-4 md:mb-8">
                                     <h3 className="text-neon-cyan font-arcade text-lg md:text-xl mb-2 md:mb-4 text-center">Players</h3>
                                     <ul className="space-y-2">
@@ -140,7 +200,7 @@ export default function GamePage() {
                                     </ul>
                                 </div>
 
-                                {/* Bouton Démarrer / Texte d'attente */}
+                                {/* Btn to start / Wait text */}
                                 <div className="flex flex-col items-center w-full">
                                     {me === leader ? (
                                         <button onClick={startGame} className="mt-4 md:mt-6 px-2 md:px-6 py-2 md:py-3 bg-arcade-purple text-neon-cyan font-arcade text-base md:text-xl border-4 border-neon-purple rounded-lg shadow-[0_0_5px_#00F7FF,0_0_10px_#9C27B0] animate-arcade-pulse transition-all duration-200 hover:scale-105 hover:shadow-[0_0_10px_#00F7FF,0_0_15px_#9C27B0] active:translate-y-1">
@@ -152,8 +212,9 @@ export default function GamePage() {
                                 </div>
                             </>
                         ) : (
-                            // Grille de jeu (à implémenter)
-                            <div className="text-neon-magenta font-arcade text-xl md:text-2xl">Game grid (to do)</div>
+                            // Grid game (to do)
+                            // <div className="text-neon-magenta font-arcade text-xl md:text-2xl">Game grid (to do)</div>
+							<GameGrid/>
                         )}
                     </div>
                 </div>

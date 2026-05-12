@@ -1,4 +1,5 @@
 import {createSlice} from "@reduxjs/toolkit"
+import {createBoard} from "../games/game/board"
 
 const initialState = {
 	rooms: [],
@@ -7,7 +8,9 @@ const initialState = {
 	roomId: null,
 	leader: null,
 	status: "waiting",
-	pieces: []
+	pieces: [],
+	board: createBoard(),
+	currentPiece: null
 }
 
 const gameSlice = createSlice({
@@ -30,9 +33,15 @@ const gameSlice = createSlice({
 		},
 		setPieces: (state, action) => {
 			state.pieces = [...state.pieces, ...action.payload]
+		},
+		setBoard: (state, action) => {
+			state.board = action.payload
+		},
+		setCurrentPiece: (state, action) => {
+			state.currentPiece = action.payload
 		}
 	}
 })
 
-export const {setRooms, setState, setMe, setRoomId} = gameSlice.actions
+export const {setRooms, setState, setMe, setRoomId, setPieces, setBoard, setCurrentPiece} = gameSlice.actions
 export default gameSlice.reducer
