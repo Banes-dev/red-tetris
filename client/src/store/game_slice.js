@@ -39,9 +39,12 @@ const gameSlice = createSlice({
 		},
 		setCurrentPiece: (state, action) => {
 			state.currentPiece = action.payload
+		},
+		consumePiece: (state) => {
+			state.pieces.shift()
 		}
 	}
 })
 
-export const {setRooms, setState, setMe, setRoomId, setPieces, setBoard, setCurrentPiece} = gameSlice.actions
+export const {setRooms, setState, setMe, setRoomId, setPieces, setBoard, setCurrentPiece, consumePiece} = gameSlice.actions
 export default gameSlice.reducer
