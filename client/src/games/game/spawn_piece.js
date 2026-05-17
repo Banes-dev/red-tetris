@@ -4,7 +4,8 @@ export function spawnPiece(type)
 {
 	return {
 		type,
-		shape: PIECES[type],
+		rotation: 0,
+		shape: PIECES[type][0],
 		x: 3,
 		y: 0
 	}

@@ -1,35 +1,40 @@
 import {useEffect} from "react"
 import {useDispatch, useSelector} from "react-redux"
 
-import {
-	setCurrentPiece,
-	setBoard,
-	consumePiece
-} from "../../store/game_slice"
+import {store} from "../../store/store"
+import {setCurrentPiece, setBoard, consumePiece} from "../../store/game_slice"
 
 import {movePiece} from "../game/move"
-import {hasCollision} from "../game/collisions"
 import {lockPiece} from "../game/lock_piece"
 import {spawnPiece} from "../game/spawn_piece"
+import {clearLines} from "../game/clear_lines"
 
 import {socket} from "../../socket/socket"
 
-export default function Gravity()
-{
+export default function useGravity() {
+
 	const dispatch = useDispatch()
 
-	const board = useSelector(state => state.game.board)
-	const currentPiece = useSelector(state => state.game.currentPiece)
-	const pieces = useSelector(state => state.game.pieces)
 	const status = useSelector(state => state.game.status)
 	const roomId = useSelector(state => state.game.roomId)
 
 	useEffect(() => {
 
-		if (!currentPiece || status !== "playing")
+		if (status !== "playing")
 			return
 
 		const interval = setInterval(() => {
+
+			const state = store.getState().game
+
+			const {
+				board,
+				currentPiece,
+				pieces
+			} = state
+
+			if (!currentPiece)
+				return
 
 			const moved = movePiece(
 				board,
@@ -38,16 +43,23 @@ export default function Gravity()
 				1
 			)
 
-			// collision floor/pile
+			// piece blocked
 			if (moved === currentPiece) {
 
-				const newBoard = lockPiece(board, currentPiece)
+				let newBoard = lockPiece(
+					board,
+					currentPiece
+				)
+
+				// clear lines
+				const clearedData = clearLines(newBoard)
+
+				newBoard = clearedData.board
 
 				dispatch(setBoard(newBoard))
 
 				dispatch(consumePiece())
 
-				// demander nouvelles pièces
 				if (pieces.length < 5) {
 					socket.emit("request_pieces", {roomId})
 				}
@@ -55,6 +67,7 @@ export default function Gravity()
 				const nextType = pieces[1]
 
 				if (nextType) {
+
 					dispatch(setCurrentPiece(
 						spawnPiece(nextType)
 					))
@@ -69,12 +82,5 @@ export default function Gravity()
 
 		return () => clearInterval(interval)
 
-	}, [
-		board,
-		currentPiece,
-		pieces,
-		status,
-		roomId,
-		dispatch
-	])
+	}, [status, roomId, dispatch])
 }

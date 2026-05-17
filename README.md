@@ -16,9 +16,8 @@
 
 To do :
 - Bug joueur pas deco quand retour ? (plusieurs f5 pour corriger sa) (a revoir)
-- Rotation de piece
-- Gauche droite permet de cancel la gravite
-- Systeme de ligne qui se retire et qui se bloque pour les autres joueurs
+- Chaque piece d'une couleur differente et avec un effet neon
+- Systeme de ligne qui se retire (animation) et qui se bloque pour les autres joueurs
 - Systeme de score
 - Systeme de fin de game et detection si tout les joueurs ont fini
 - Adapter game en multi pour le solo

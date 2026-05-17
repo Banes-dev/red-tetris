@@ -2,15 +2,24 @@ import {hasCollision} from "./collisions"
 
 export function movePiece(board, piece, dx, dy)
 {
-	const newX = piece.x + dx
-	const newY = piece.y + dy
-
-	if (hasCollision(board, piece, newX, newY))
+	if (!piece)
 		return piece
 
-	return {
+	const movedPiece = {
 		...piece,
-		x: newX,
-		y: newY
+		x: piece.x + dx,
+		y: piece.y + dy
 	}
+
+	if (
+		hasCollision(
+			board,
+			movedPiece,
+			movedPiece.x,
+			movedPiece.y
+		)
+	)
+		return piece
+
+	return movedPiece
 }
