@@ -61,20 +61,44 @@ export default function GamePage()
 	}
 
 	return (
-		<div className="w-screen min-h-screen flex items-center justify-center bg-black relative">
-			<Link to="/" className="absolute top-0 left-0 w-36 h-12 flex items-center justify-center rounded-br-lg bg-arcade-black border-b-4 border-r-4 border-neon-blue font-arcade text-white"
-			><FontAwesomeIcon icon={faCircleLeft} className="mr-4"/>quit</Link>
+		// <div className="w-screen min-h-screen flex items-center justify-center bg-black relative">
+		    <div className="w-screen min-h-screen flex flex-col hidden-scrollbar relative">
+            {/* Background color */}
+            <div className="absolute top-0 inset-0 -z-10 bg-arcade-black"></div>
 
-			<div className="p-8 border-4 border-neon-yellow rounded-lg bg-arcade-black">
-				{errorMessage && (
-					<p className="text-red-500 mb-4">{errorMessage}</p>
-				)}
-				{status === "waiting" ?
-					<Lobby startGame={startGame}/>
-				:
-					<GameGrid/>
-				}
-			</div>
-		</div>
+            {/* Background image */}
+            <div className="absolute inset-0 -z-10 opacity-20">
+				<img src="/background.jpg" alt="Image de fond" className="w-full h-full object-cover" loading="eager"/>
+				<div className="absolute inset-0 bg-gradient-to-b from-transparent via-arcade-purple/20 to-arcade-black"></div>
+            </div>
+
+			{/* Game title */}
+			{status === "waiting" &&
+				<div className="absolute flex flex-row items-center justify-center w-full p-2 md:p-6 mt-8 md:mt-0">
+					<img src="/red-tetris_logo.png" alt="Logo Tetris" className="w-24 md:w-36 mr-6 mb-0" loading="eager"/>
+					<h1 className="text-2xl md:text-5xl font-bold text-neon-red font-arcade text-center animate-flicker">red-tetris</h1>
+				</div>
+			}
+
+            <main className="flex flex-col items-center justify-center w-full min-h-screen overflow-hidden pt-36 md:pt-0 pb-12 md:pb-0">
+				<Link to="/" className="absolute top-0 left-0 w-36 h-12 flex items-center justify-center rounded-br-lg bg-arcade-black border-b-4 border-r-4 border-neon-blue font-arcade text-white"
+				><FontAwesomeIcon icon={faCircleLeft} className="mr-4"/>quit</Link>
+
+				{/* <div className="p-8 border-4 border-neon-yellow rounded-lg bg-arcade-black"> */}
+				<div className="flex flex-col items-center justify-center flex-grow w-full">
+					<div className="flex flex-col items-center justify-center w-10/12 md:w-3/10 h-auto py-8 rounded-lg bg-arcade-black border-4 border-neon-yellow animate-slide_in_up">
+						{errorMessage && (
+							<p className="text-red-500 mb-4">{errorMessage}</p>
+						)}
+						{status === "waiting" ?
+							<Lobby startGame={startGame}/>
+						:
+							<GameGrid/>
+						}
+					</div>
+				</div>
+			</main>
+        </div>
+		// </div>
 	)
 }
