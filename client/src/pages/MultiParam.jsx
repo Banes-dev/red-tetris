@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {useDispatch} from "react-redux"
 import {Link, useNavigate} from "react-router-dom";
-import {setState, setMe, setRoomId} from "../store/game_slice"
+import {setRooms, setState, setMe, setRoomId} from "../store/game_slice"
 import {socket} from "../socket/socket"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleLeft, faPlus, faLock, faLockOpen} from "@fortawesome/free-solid-svg-icons";
@@ -24,6 +24,10 @@ export default function MultiParam()
 
     const timeOptions = [1, 2, 3, 5, 8, 10, 15];
     const playerLimitOptions = [2, 3, 4, 5, 6, 8, 10];
+
+	const handleRoomsList = (data) => {
+		dispatch(setRooms(data));
+	};
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -53,10 +57,13 @@ export default function MultiParam()
 				dispatch(setMe(socket.id))
 				dispatch(setRoomId(roomName))
                 navigate(`/${roomName}/${playerName}`);
+				socket.emit("get_rooms")
+				socket.on("rooms_list", handleRoomsList);
 				setErrorMessage("");
 			}
             else {
                 console.error("Server error :", response.message);
+				socket.off("rooms_list", handleRoomsList);
 				setErrorMessage(response.message || "An error occurred while creating the room.");
             }
         })

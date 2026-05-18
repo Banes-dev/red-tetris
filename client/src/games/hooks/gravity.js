@@ -16,71 +16,45 @@ export default function useGravity() {
 	const dispatch = useDispatch()
 
 	const status = useSelector(state => state.game.status)
+	const rooms = useSelector(state => state.game.rooms)
 	const roomId = useSelector(state => state.game.roomId)
 
-	useEffect(() => {
+	const currentRoom = rooms.find(room => room.id === roomId)
+	const gravity = currentRoom?.gravity || 1
+	console.log(rooms, roomId, currentRoom)
 
+	useEffect(() => {
 		if (status !== "playing")
 			return
 
 		const interval = setInterval(() => {
-
 			const state = store.getState().game
-
-			const {
-				board,
-				currentPiece,
-				pieces
-			} = state
-
+			const {board, currentPiece, pieces} = state
 			if (!currentPiece)
 				return
 
-			const moved = movePiece(
-				board,
-				currentPiece,
-				0,
-				1
-			)
+			const moved = movePiece(board, currentPiece, 0, 1)
 
 			// piece blocked
-			if (moved === currentPiece) {
-
-				let newBoard = lockPiece(
-					board,
-					currentPiece
-				)
+			if (moved === currentPiece)
+			{
+				let newBoard = lockPiece(board, currentPiece)
 
 				// clear lines
 				const clearedData = clearLines(newBoard)
-
 				newBoard = clearedData.board
-
 				dispatch(setBoard(newBoard))
-
 				dispatch(consumePiece())
-
-				if (pieces.length < 5) {
+				if (pieces.length < 5)
 					socket.emit("request_pieces", {roomId})
-				}
-
 				const nextType = pieces[1]
-
-				if (nextType) {
-
-					dispatch(setCurrentPiece(
-						spawnPiece(nextType)
-					))
-				}
-
+				if (nextType)
+					dispatch(setCurrentPiece(spawnPiece(nextType)))
 				return
 			}
-
 			dispatch(setCurrentPiece(moved))
-
-		}, 500)
+		}, 1250 - (250 * (gravity - 1))) // Gravity level : 1 = 1250, 2 = 1000, 3 = 750, 4 = 500 and 5 = 250
 
 		return () => clearInterval(interval)
-
 	}, [status, roomId, dispatch])
 }

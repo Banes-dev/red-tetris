@@ -1,5 +1,4 @@
 export const PIECES = {
-
 	I: [
 		[
 			[0,0,0,0],
@@ -116,4 +115,14 @@ export const PIECES = {
 			[0,1,0]
 		]
 	]
+}
+
+export const PIECE_COLORS = {
+	T: "#9C27B0", // purple neon
+	I: "#00F7FF", // cyan
+	O: "#FFEB3B", // yellow
+	L: "#FF5722", // orange
+	J: "#3F51B5", // blue
+	S: "#4CAF50", // green
+	Z: "#ff073a"  // red
 }
