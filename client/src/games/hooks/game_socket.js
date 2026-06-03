@@ -1,7 +1,7 @@
 import {useEffect} from "react"
 import {useDispatch} from "react-redux"
 
-import {setState, setPieces, setBoard, setCurrentPiece} from "../../store/game_slice"
+import {setState, setPieces, setBoard, setCurrentPiece, setScore} from "../../store/game_slice"
 
 import {socket} from "../../socket/socket"
 import {createBoard} from "../game/board"
@@ -19,6 +19,7 @@ export default function GameSocket()
 		socket.on("game_started", ({pieces}) => {
 			dispatch(setPieces(pieces))
 			dispatch(setBoard(createBoard()))
+			dispatch(setScore(0))
 
 			const type = pieces[0]
 

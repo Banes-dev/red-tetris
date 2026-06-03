@@ -17,7 +17,6 @@
 To do :
 - Bug joueur pas deco quand retour ? (plusieurs f5 pour corriger sa) (a revoir)
 - Systeme de ligne qui se retire (animation) et qui se bloque pour les autres joueurs
-- Systeme de score
 - Systeme de fin de game et detection si tout les joueurs ont fini
 - Adapter game en multi pour le solo
 - Piece invisible option

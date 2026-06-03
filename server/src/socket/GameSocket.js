@@ -181,4 +181,22 @@ export function registerGameSocket(io, socket)
 		const pieces = game.getNextPieces(5)
 		socket.emit("pieces", pieces)
 	})
+
+	// Update player score
+	socket.on("update_score", ({roomId, score}) => {
+		const game = roomManager.getRoom(roomId)
+		if (!game)
+			return
+
+		const player = game.players.find(p => p.id === socket.id)
+		if (player)
+		{
+			player.score = score
+			io.to(roomId).emit("room_update", {
+				players: game.players,
+				leader: game.leader,
+				status: game.status
+			})
+		}
+	})
 }

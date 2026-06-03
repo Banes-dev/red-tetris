@@ -10,7 +10,8 @@ const initialState = {
 	status: "waiting",
 	pieces: [],
 	board: createBoard(),
-	currentPiece: null
+	currentPiece: null,
+	score: 0
 }
 
 const gameSlice = createSlice({
@@ -42,9 +43,12 @@ const gameSlice = createSlice({
 		},
 		consumePiece: (state) => {
 			state.pieces.shift()
+		},
+		setScore: (state, action) => {
+			state.score = action.payload
 		}
 	}
 })
 
-export const {setRooms, setState, setMe, setRoomId, setPieces, setBoard, setCurrentPiece, consumePiece} = gameSlice.actions
+export const {setRooms, setState, setMe, setRoomId, setPieces, setBoard, setCurrentPiece, consumePiece, setScore} = gameSlice.actions
 export default gameSlice.reducer

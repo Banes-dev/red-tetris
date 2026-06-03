@@ -2,7 +2,7 @@ import {useEffect} from "react"
 import {useDispatch, useSelector} from "react-redux"
 
 import {store} from "../../store/store"
-import {setCurrentPiece, setBoard, consumePiece} from "../../store/game_slice"
+import {setCurrentPiece, setBoard, consumePiece, setScore} from "../../store/game_slice"
 
 import {movePiece} from "../game/move"
 import {lockPiece} from "../game/lock_piece"
@@ -41,9 +41,11 @@ export default function useGravity() {
 				let newBoard = lockPiece(board, currentPiece)
 
 				// clear lines
-				const clearedData = clearLines(newBoard)
+				const clearedData = clearLines(newBoard, state.score)
 				newBoard = clearedData.board
 				dispatch(setBoard(newBoard))
+				dispatch(setScore(clearedData.score))
+				socket.emit("update_score", {roomId, score: clearedData.score})
 				dispatch(consumePiece())
 				if (pieces.length < 5)
 					socket.emit("request_pieces", {roomId})
