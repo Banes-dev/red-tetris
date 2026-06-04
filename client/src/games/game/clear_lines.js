@@ -1,7 +1,14 @@
 export function clearLines(board, currentScore = 0)
 {
+	// Filter out completed lines, but don't clear lines that contain blocked cells (value 2)
 	const filtered = board.filter(
-		row => row.some(cell => cell === 0)
+		row => {
+			// If row contains blocked cells (value 2), keep it (don't clear it)
+			if (row.some(cell => cell === 2))
+				return true
+			// Otherwise, only keep rows that have empty cells (not completed)
+			return row.some(cell => cell === 0)
+		}
 	)
 
 	const cleared = 20 - filtered.length

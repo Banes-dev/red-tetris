@@ -34,9 +34,18 @@ export default function GameGrid()
 				<h3 className="text-neon-green font-arcade text-xl">Score : {score}</h3>
 			</div>
 			<div className="grid gap-[2px] bg-black" style={{gridTemplateColumns: "repeat(10, 30px)"}}>
-				{displayBoard.flat().map((cell, i) => (
-					<div key={i} className="w-[30px] h-[30px] rounded-sm border border-gray-900" style={{backgroundColor: cell ? PIECE_COLORS[cell] : "#000", boxShadow: cell ? `0 0 4px ${PIECE_COLORS[cell]}80, 0 0 6px ${PIECE_COLORS[cell]}40` : "none",}}/>
-				))}
+				{displayBoard.flat().map((cell, i) => {
+					// Special color for blocked lines (value 2)
+					const isBlockedLine = cell === 2
+					const cellColor = isBlockedLine ? "#8B4513" : (cell ? PIECE_COLORS[cell] : "#000")
+					const shadowColor = isBlockedLine ? "#8B4513" : (cell ? PIECE_COLORS[cell] : "none")
+					return (
+						<div key={i} className="w-[30px] h-[30px] rounded-sm border border-gray-900" style={{
+							backgroundColor: cellColor,
+							boxShadow: cell ? `0 0 4px ${shadowColor}80, 0 0 6px ${shadowColor}40` : "none"
+						}}/>
+					)
+				})}
 			</div>
 		</div>
 	)

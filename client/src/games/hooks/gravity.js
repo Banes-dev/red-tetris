@@ -11,8 +11,8 @@ import {clearLines} from "../game/clear_lines"
 
 import {socket} from "../../socket/socket"
 
-export default function useGravity() {
-
+export default function useGravity()
+{
 	const dispatch = useDispatch()
 
 	const status = useSelector(state => state.game.status)
@@ -21,7 +21,7 @@ export default function useGravity() {
 
 	const currentRoom = rooms.find(room => room.id === roomId)
 	const gravity = currentRoom?.gravity || 1
-	console.log(rooms, roomId, currentRoom)
+	// console.log(rooms, roomId, currentRoom)
 
 	useEffect(() => {
 		if (status !== "playing")
@@ -46,6 +46,13 @@ export default function useGravity() {
 				dispatch(setBoard(newBoard))
 				dispatch(setScore(clearedData.score))
 				socket.emit("update_score", {roomId, score: clearedData.score})
+
+				// Send lines cleared event to server for multiplayer effect
+				if (clearedData.cleared > 0)
+				{
+					socket.emit("lines_cleared", {roomId, lines: clearedData.cleared})
+				}
+
 				dispatch(consumePiece())
 				if (pieces.length < 5)
 					socket.emit("request_pieces", {roomId})

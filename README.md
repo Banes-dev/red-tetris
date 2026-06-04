@@ -15,12 +15,10 @@
 # Server
 
 To do :
-- Bug joueur pas deco quand retour ? (plusieurs f5 pour corriger sa) (a revoir)
-- Systeme de ligne qui se retire (animation) et qui se bloque pour les autres joueurs
 - Systeme de fin de game et detection si tout les joueurs ont fini
-- Adapter game en multi pour le solo
 - Piece invisible option
 - Limite de temps option
+- Adapter game en multi pour le solo
 - Recheck sujet et correction
 
 

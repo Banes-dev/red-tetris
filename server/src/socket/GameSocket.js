@@ -62,6 +62,13 @@ export function registerGameSocket(io, socket)
 		let existingPlayer = game.players.find(p => p.name === playerName)
 		if (existingPlayer)
 		{
+			// Check if player left voluntarily - if so, don't allow reconnect
+			if (existingPlayer.hasLeft)
+			{
+				callback({success: false, message: "You left the game voluntarily"});
+				return
+			}
+
 			// update socket.id
 			if (existingPlayer.id == game.leader)
 				game.leader = socket.id
@@ -116,13 +123,10 @@ export function registerGameSocket(io, socket)
 		if (!player)
 			return
 
-		// wait before disconnect, check if reconnect
-		setTimeout(() => {
-			// si le joueur s'est reconnecté entre temps → ne rien faire
-			const stillThere = game.players.find(p => p.name === player.name && p.id !== socket.id)
-			if (stillThere)
-				return
-
+		// Only remove player if they left voluntarily
+		// For normal disconnections (refresh), keep them in the game for reconnection
+		if (player.hasLeft)
+		{
 			game.removePlayer(socket.id)
 
 			// si plus de joueurs → supprimer la room
@@ -134,7 +138,7 @@ export function registerGameSocket(io, socket)
 			}
 
 			// si leader parti → nouveau leader
-			if (game.leader === socket.id)
+			if (game.leader === socket.id && game.players.length > 0)
 				game.leader = game.players[0].id
 
 			io.to(game.id).emit("room_update", {
@@ -143,7 +147,9 @@ export function registerGameSocket(io, socket)
 				status: game.status
 			})
 			io.emit("rooms_list", roomManager.getRoomsList())
-		}, 2000) // 2s delay
+		}
+		// For normal disconnections (refresh), don't remove the player
+		// They can reconnect within a reasonable time
 	})
 
 	// Start game
@@ -198,5 +204,53 @@ export function registerGameSocket(io, socket)
 				status: game.status
 			})
 		}
+	})
+
+	// Player voluntarily leaves the game
+	socket.on("leave_game", ({roomId}) => {
+		const game = roomManager.getRoom(roomId)
+		if (!game)
+			return
+
+		const player = game.players.find(p => p.id === socket.id)
+		if (player)
+		{
+			player.hasLeft = true
+			game.removePlayer(socket.id)
+
+			// si plus de joueurs → supprimer la room
+			if (game.players.length === 0)
+			{
+				roomManager.deleteRoom(game.id)
+				io.emit("rooms_list", roomManager.getRoomsList())
+				return
+			}
+
+			// si leader parti → nouveau leader
+			if (game.leader === socket.id && game.players.length > 0)
+				game.leader = game.players[0].id
+
+			io.to(roomId).emit("room_update", {
+				players: game.players,
+				leader: game.leader,
+				status: game.status
+			})
+			io.emit("rooms_list", roomManager.getRoomsList())
+		}
+	})
+
+	// Handle lines cleared by a player - send blocked lines to other players
+	socket.on("lines_cleared", ({roomId, lines}) => {
+		const game = roomManager.getRoom(roomId)
+		if (!game)
+			return
+
+		// Send blocked lines to all other players in the room
+		game.players.forEach(player => {
+			if (player.id !== socket.id)  // Don't send to the player who cleared the lines
+			{
+				io.to(player.id).emit("add_blocked_lines", {lines})
+			}
+		})
 	})
 }

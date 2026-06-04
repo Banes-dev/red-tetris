@@ -4,6 +4,7 @@ import {useDispatch, useSelector} from "react-redux"
 
 import {setState, setMe, setRoomId} from "../store/game_slice"
 import {socket} from "../socket/socket"
+import {useNavigate} from "react-router-dom"
 
 import GameSocket from "./hooks/game_socket"
 import Gravity from "./hooks/gravity"
@@ -18,6 +19,7 @@ import {faCircleLeft} from "@fortawesome/free-solid-svg-icons"
 export default function GamePage()
 {
 	const dispatch = useDispatch()
+	const navigate = useNavigate()
 
 	const [errorMessage, setErrorMessage] = useState("")
 
@@ -77,8 +79,15 @@ export default function GamePage()
 			}
 
             <main className="flex flex-col items-center justify-center w-full min-h-screen overflow-hidden pt-36 md:pt-0 pb-12 md:pb-0">
-				<Link to="/" className="absolute top-0 left-0 w-36 h-12 flex items-center justify-center rounded-br-lg bg-arcade-black border-b-4 border-r-4 border-neon-blue font-arcade text-white"
-				><FontAwesomeIcon icon={faCircleLeft} className="mr-4"/>quit</Link>
+				<button
+					onClick={() => {
+						socket.emit("leave_game", {roomId})
+						navigate("/")
+					}}
+					className="absolute top-0 left-0 w-36 h-12 flex items-center justify-center rounded-br-lg bg-arcade-black border-b-4 border-r-4 border-neon-blue font-arcade text-white"
+				>
+					<FontAwesomeIcon icon={faCircleLeft} className="mr-4"/>quit
+				</button>
 
 				<div className="flex flex-col items-center justify-center flex-grow w-full">
 					<div className="flex flex-col items-center justify-center w-10/12 md:w-3/10 h-auto py-8 rounded-lg bg-arcade-black border-4 border-neon-yellow animate-slide_in_up">
