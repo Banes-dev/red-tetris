@@ -170,8 +170,15 @@ export function registerGameSocket(io, socket)
 			return
 		}
 		game.status = "playing"
+		game.startTime = Date.now()  // Set game start time
 		game.fillQueue()
-		io.to(roomId).emit("game_started", {roomId, seed: game.seed, pieces: game.pieceQueue.slice(0, 10)})
+		io.to(roomId).emit("game_started", {
+			roomId,
+			seed: game.seed,
+			pieces: game.pieceQueue.slice(0, 10),
+			timeLimit: game.timeLimit,  // Send time limit to clients
+			invisiblePieces: game.invisiblePieces  // Send invisible pieces option
+		})
 		io.to(roomId).emit("room_update", {players: game.players, leader: game.leader, status: game.status})
 
 		console.log("game started : ", roomId)

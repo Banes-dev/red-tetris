@@ -32,6 +32,9 @@ function Game({id, gravityLevel, invisiblePieces, timeLimit, playerLimit, isPriv
 	this.seed = Date.now()
 	this.rng = createRNG(this.seed)
 	this.pieceQueue = []
+
+	// game timing
+	this.startTime = null
 }
 
 // Player function

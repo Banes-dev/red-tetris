@@ -13,7 +13,11 @@ const initialState = {
 	currentPiece: null,
 	score: -1,
 	gameOver: false,
-	gameOverScore: 0
+	gameOverScore: 0,
+	timeLimit: 0,  // in minutes
+	startTime: null,
+	timeLeft: null,
+	invisiblePieces: false
 }
 
 const gameSlice = createSlice({
@@ -54,6 +58,18 @@ const gameSlice = createSlice({
 			state.gameOverScore = action.payload.score
 			state.status = "gameover"
 		},
+		setTimeLimit: (state, action) => {
+			state.timeLimit = action.payload
+		},
+		setStartTime: (state, action) => {
+			state.startTime = action.payload
+		},
+		setTimeLeft: (state, action) => {
+			state.timeLeft = action.payload
+		},
+		setInvisiblePieces: (state, action) => {
+			state.invisiblePieces = action.payload
+		},
 		resetGame: (state) => {
 			state.board = createBoard()
 			state.currentPiece = null
@@ -61,10 +77,13 @@ const gameSlice = createSlice({
 			state.score = 0
 			state.gameOver = false
 			state.gameOverScore = 0
+			state.timeLimit = 0
+			state.startTime = null
+			state.timeLeft = null
 			state.status = "waiting"
 		}
 	}
 })
 
-export const {setRooms, setState, setMe, setRoomId, setPieces, setBoard, setCurrentPiece, consumePiece, setScore, setGameOver, resetGame} = gameSlice.actions
+export const {setRooms, setState, setMe, setRoomId, setPieces, setBoard, setCurrentPiece, consumePiece, setScore, setGameOver, resetGame, setTimeLimit, setStartTime, setTimeLeft, setInvisiblePieces} = gameSlice.actions
 export default gameSlice.reducer

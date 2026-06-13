@@ -61,6 +61,11 @@ export default function useGravity()
 				if (nextType)
 				{
 					const newPiece = spawnPiece(nextType)
+					// Apply invisible pieces effect if enabled
+					const state = store.getState().game
+					if (state.invisiblePieces && Math.random() < 0.2) {
+						newPiece.opacity = 0.1  // 10% opacity for invisible pieces
+					}
 					// Check if the new piece can be spawned without collision
 					if (hasCollision(newBoard, newPiece, newPiece.x, newPiece.y))
 					{

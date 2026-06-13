@@ -9,6 +9,7 @@ import {useNavigate} from "react-router-dom"
 import GameSocket from "./hooks/game_socket"
 import Gravity from "./hooks/gravity"
 import Keyboard from "./hooks/keyboard"
+import Timer from "./hooks/timer"
 
 import Lobby from "./components/Lobby"
 import GameGrid from "./components/GameGrid"
@@ -32,6 +33,7 @@ export default function GamePage()
 	GameSocket()
 	Gravity()
 	Keyboard()
+	Timer()
 
 	useEffect(() => {
 		socket.emit("join_room", {roomId: paramRoomId, playerName: paramPlayerName}, (response) => {

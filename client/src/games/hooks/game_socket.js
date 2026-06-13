@@ -1,7 +1,7 @@
 import {useEffect} from "react"
 import {useDispatch} from "react-redux"
 
-import {setState, setPieces, setBoard, setCurrentPiece, setScore, setGameOver} from "../../store/game_slice"
+import {setState, setPieces, setBoard, setCurrentPiece, setScore, setGameOver, setTimeLimit, setStartTime, setInvisiblePieces} from "../../store/game_slice"
 import {addBlockedLines} from "../game/blocked_lines"
 
 import {socket} from "../../socket/socket"
@@ -29,16 +29,19 @@ export default function GameSocket()
 			}
 		})
 
-		socket.on("game_started", ({pieces}) => {
+		socket.on("game_started", ({pieces, timeLimit, invisiblePieces}) => {
 			dispatch(setPieces(pieces))
 			dispatch(setBoard(createBoard()))
 			dispatch(setScore(0))
+			dispatch(setTimeLimit(timeLimit))
+			dispatch(setStartTime(Date.now()))
+			dispatch(setInvisiblePieces(invisiblePieces || false))
 
 			const type = pieces[0]
 
 			dispatch(setCurrentPiece({
 				type,
-				shape: PIECES[type],
+				shape: PIECES[type][0],
 				x: 3,
 				y: 0
 			}))
