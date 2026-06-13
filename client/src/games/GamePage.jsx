@@ -12,6 +12,7 @@ import Keyboard from "./hooks/keyboard"
 
 import Lobby from "./components/Lobby"
 import GameGrid from "./components/GameGrid"
+import GameOver from "./components/GameOver"
 
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome"
 import {faCircleLeft} from "@fortawesome/free-solid-svg-icons"
@@ -91,11 +92,14 @@ export default function GamePage()
 
 				<div className="flex flex-col items-center justify-center flex-grow w-full">
 					<div className="flex flex-col items-center justify-center w-10/12 md:w-3/10 h-auto py-8 rounded-lg bg-arcade-black border-4 border-neon-yellow animate-slide_in_up">
+					{/* <div className="flex flex-col items-center justify-center"> */}
 						{errorMessage && (
 							<p className="text-red-500 mb-4">{errorMessage}</p>
 						)}
 						{status === "waiting" ?
 							<Lobby startGame={startGame}/>
+						: status === "gameover" ?
+							<GameOver/>
 						:
 							<GameGrid/>
 						}

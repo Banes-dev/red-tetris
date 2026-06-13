@@ -15,7 +15,6 @@
 # Server
 
 To do :
-- Systeme de fin de game et detection si tout les joueurs ont fini
 - Piece invisible option
 - Limite de temps option
 - Adapter game en multi pour le solo

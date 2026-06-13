@@ -253,4 +253,55 @@ export function registerGameSocket(io, socket)
 			}
 		})
 	})
+
+	// Handle game over event
+	socket.on("game_over", ({roomId, score}) => {
+		const game = roomManager.getRoom(roomId)
+		if (!game)
+			return
+
+		const player = game.players.find(p => p.id === socket.id)
+		if (player)
+		{
+			player.score = score
+			player.gameOver = true
+
+			// Update room status with updated player scores
+			io.to(roomId).emit("room_update", {
+				players: game.players,
+				leader: game.leader,
+				status: game.status
+			})
+
+			// Check if all players have finished
+			const allFinished = game.players.every(p => p.gameOver)
+			if (allFinished)
+			{
+				// All players finished, send final scores to all players
+				io.to(roomId).emit("all_players_finished", {
+					players: game.players.map(p => ({
+						id: p.id,
+						name: p.name,
+						score: p.score
+					}))
+				})
+
+				// Reset game state for next round
+				game.players.forEach(p => {
+					p.gameOver = false
+					// Keep scores for display in lobby, but reset for next game
+					// p.score = 0
+				})
+				game.status = "waiting"
+			}
+			else
+			{
+				// Notify other players that a player has finished
+				io.to(roomId).emit("player_finished", {
+					playerId: socket.id,
+					score: score
+				})
+			}
+		}
+	})
 }

@@ -11,7 +11,9 @@ const initialState = {
 	pieces: [],
 	board: createBoard(),
 	currentPiece: null,
-	score: 0
+	score: -1,
+	gameOver: false,
+	gameOverScore: 0
 }
 
 const gameSlice = createSlice({
@@ -46,9 +48,23 @@ const gameSlice = createSlice({
 		},
 		setScore: (state, action) => {
 			state.score = action.payload
+		},
+		setGameOver: (state, action) => {
+			state.gameOver = action.payload.gameOver
+			state.gameOverScore = action.payload.score
+			state.status = "gameover"
+		},
+		resetGame: (state) => {
+			state.board = createBoard()
+			state.currentPiece = null
+			state.pieces = []
+			state.score = 0
+			state.gameOver = false
+			state.gameOverScore = 0
+			state.status = "waiting"
 		}
 	}
 })
 
-export const {setRooms, setState, setMe, setRoomId, setPieces, setBoard, setCurrentPiece, consumePiece, setScore} = gameSlice.actions
+export const {setRooms, setState, setMe, setRoomId, setPieces, setBoard, setCurrentPiece, consumePiece, setScore, setGameOver, resetGame} = gameSlice.actions
 export default gameSlice.reducer
