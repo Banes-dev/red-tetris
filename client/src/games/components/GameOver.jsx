@@ -1,8 +1,37 @@
 import {useSelector} from "react-redux"
+import {useCookies} from 'react-cookie';
+import {useNavigate} from 'react-router-dom';
+import {useEffect} from 'react';
 
 export default function GameOver()
 {
+	const [cookies, setCookie] = useCookies(['best_score', 'last_score']);
+	const navigate = useNavigate();
 	const score = useSelector(state => state.game.gameOverScore)
+	const roomId = useSelector(state => state.game.roomId)
+
+	useEffect(() => {
+		// Only handle score saving for solo mode
+		if (roomId === "solo-room") {
+			// Set last score
+			const sixMonthsFromNow = new Date(Date.now() + 6 * 30 * 24 * 60 * 60 * 1000);
+
+			// Update last score
+			setCookie('last_score', score, { path: '/', expires: sixMonthsFromNow });
+
+			// Update best score if current score is better
+			if (!cookies.best_score || score > cookies.best_score) {
+				setCookie('best_score', score, { path: '/', expires: sixMonthsFromNow });
+			}
+
+			// Redirect to solo params after 3 seconds
+			const timer = setTimeout(() => {
+				navigate('/solo_param');
+			}, 5000);
+
+			return () => clearTimeout(timer);
+		}
+	}, [roomId, cookies.best_score, setCookie, navigate]);
 	const players = useSelector(state => state.game.players)
 	const me = useSelector(state => state.game.me)
 

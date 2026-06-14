@@ -1,5 +1,5 @@
 import {useEffect} from "react"
-import {useDispatch} from "react-redux"
+import {useDispatch, useSelector} from "react-redux"
 
 import {setState, setPieces, setBoard, setCurrentPiece, setScore, setGameOver, setTimeLimit, setStartTime, setInvisiblePieces} from "../../store/game_slice"
 import {addBlockedLines} from "../game/blocked_lines"
@@ -12,8 +12,14 @@ import {PIECES} from "../game/pieces"
 export default function GameSocket()
 {
 	const dispatch = useDispatch()
+	const roomId = useSelector(state => state.game.roomId)
 
 	useEffect(() => {
+		// Skip socket operations for solo mode
+		if (roomId === "solo-room") {
+			return
+		}
+
 		socket.on("room_update", (data) => {
 			// Don't update status if we're in gameover state
 			const currentState = store.getState().game

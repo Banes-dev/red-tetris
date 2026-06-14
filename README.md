@@ -15,10 +15,6 @@
 # Server
 
 To do :
-- Premiere pièce du jeu bizarre
-- Piece invisible option
-- Limite de temps option
-- Adapter game en multi pour le solo
 - Recheck sujet et correction
 
 

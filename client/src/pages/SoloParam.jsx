@@ -1,18 +1,22 @@
 import {useEffect, useState} from 'react';
 import {useCookies} from 'react-cookie';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCircleLeft, faPlay} from '@fortawesome/free-solid-svg-icons'
 
 export default function SoloParam()
 {
 	const [cookies, setCookie] = useCookies(['best_score', 'last_score']);
+	const navigate = useNavigate();
+
     useEffect(() => {
-        // Définir les cookies une seule fois au montage du composant
-        const sixMonthsFromNow = new Date(Date.now() + 6 * 30 * 24 * 60 * 60 * 1000);
-        setCookie('best_score', 42, { path: '/', expires: sixMonthsFromNow });
-        setCookie('last_score', 422, { path: '/', expires: sixMonthsFromNow });
-    }, [setCookie]);
+        // Initialiser les cookies si ils n'existent pas
+        if (!cookies.best_score || !cookies.last_score) {
+            const sixMonthsFromNow = new Date(Date.now() + 6 * 30 * 24 * 60 * 60 * 1000);
+            setCookie('best_score', 0, { path: '/', expires: sixMonthsFromNow });
+            setCookie('last_score', 0, { path: '/', expires: sixMonthsFromNow });
+        }
+    }, [setCookie, cookies.best_score, cookies.last_score]);
 
     const [gravityLevel, setGravityLevel] = useState(1);
     const [invisiblePieces, setInvisiblePieces] = useState(false);
@@ -22,10 +26,8 @@ export default function SoloParam()
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Envoie les paramètres au serveur et redirige vers la page de jeu
-        // Exemple : fetch('/api/game', { method: 'POST', body: JSON.stringify({ gravityLevel, invisiblePieces, timeLimit }) });
-        // Puis redirection : navigate('/game');
-		console.log({gravityLevel, invisiblePieces, timeLimit});
+        // Redirect to solo game with parameters
+        navigate(`/solo-game/${gravityLevel}/${invisiblePieces}/${timeLimit}`);
     };
 
     return (
