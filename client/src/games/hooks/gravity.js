@@ -55,8 +55,12 @@ export default function useGravity()
 				}
 
 				dispatch(consumePiece())
-				if (pieces.length < 5)
-					socket.emit("request_pieces", {roomId})
+				if (pieces.length < 5) {
+					// Only emit socket event if not in solo mode
+					if (roomId !== "solo-room") {
+						socket.emit("request_pieces", {roomId})
+					}
+				}
 				const nextType = pieces[1]
 				if (nextType)
 				{
@@ -70,7 +74,10 @@ export default function useGravity()
 					if (hasCollision(newBoard, newPiece, newPiece.x, newPiece.y))
 					{
 					// Game over - cannot spawn new piece
-					socket.emit("game_over", {roomId, score: clearedData.score})
+					// Only emit socket event if not in solo mode
+					if (roomId !== "solo-room") {
+						socket.emit("game_over", {roomId, score: clearedData.score})
+					}
 					dispatch(setGameOver({gameOver: true, score: clearedData.score}))
 					dispatch(setCurrentPiece(null))
 					return

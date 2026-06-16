@@ -26,7 +26,10 @@ export default function useTimer() {
             if (remaining <= 0) {
                 // Time's up! Force game over
                 clearInterval(interval)
-                socket.emit("game_over", {roomId, score: score})
+                // Only emit socket event if not in solo mode
+                if (roomId !== "solo-room") {
+                    socket.emit("game_over", {roomId, score: score})
+                }
                 dispatch(setGameOver({gameOver: true, score: score}))
                 return
             }

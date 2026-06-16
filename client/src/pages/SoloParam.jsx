@@ -10,8 +10,9 @@ export default function SoloParam()
 	const navigate = useNavigate();
 
     useEffect(() => {
-        // Initialiser les cookies si ils n'existent pas
-        if (!cookies.best_score || !cookies.last_score) {
+        // Init cookies at 0 if not exist
+        if (!cookies.best_score || !cookies.last_score)
+		{
             const sixMonthsFromNow = new Date(Date.now() + 6 * 30 * 24 * 60 * 60 * 1000);
             setCookie('best_score', 0, { path: '/', expires: sixMonthsFromNow });
             setCookie('last_score', 0, { path: '/', expires: sixMonthsFromNow });
@@ -102,7 +103,7 @@ export default function SoloParam()
 							</div>
 
 							{/* Btn start game*/}
-							<button type="submit" className="mt-6 px-6 py-3 bg-arcade-purple text-neon-cyan font-arcade text-xl border-4 border-neon-purple rounded-lg shadow-[0_0_10px_#00F7FF,0_0_20px_#9C27B0] animate-arcade-pulse transition-all duration-200 hover:scale-105 hover:shadow-[0_0_15px_#00F7FF,0_0_25px_#9C27B0] active:translate-y-1">
+							<button type="submit" className="mt-2 px-6 py-3 bg-arcade-purple text-neon-cyan font-arcade text-xl border-4 border-neon-purple rounded-lg shadow-[0_0_10px_#00F7FF,0_0_20px_#9C27B0] animate-arcade-pulse transition-all duration-200 hover:scale-105 hover:shadow-[0_0_15px_#00F7FF,0_0_25px_#9C27B0] active:translate-y-1">
 								<FontAwesomeIcon icon={faPlay} className="text-neon-cyan text-2xl mr-3"/>Start the game
 							</button>
 						</form>
