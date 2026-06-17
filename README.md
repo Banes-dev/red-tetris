@@ -15,7 +15,6 @@
 # Server
 
 To do :
-- npm audit la secu
 - Héberger projet sur vps et accessible partout / public le repo github + lien pour test
 - Recheck sujet et correction
 
