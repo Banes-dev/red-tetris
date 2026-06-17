@@ -17,7 +17,8 @@ const initialState = {
 	timeLimit: 0,  // in minutes
 	startTime: null,
 	timeLeft: null,
-	invisiblePieces: false
+	invisiblePieces: false,
+	gravity: 1  // default gravity level
 }
 
 const gameSlice = createSlice({
@@ -70,6 +71,9 @@ const gameSlice = createSlice({
 		setInvisiblePieces: (state, action) => {
 			state.invisiblePieces = action.payload
 		},
+		setGravity: (state, action) => {
+			state.gravity = action.payload
+		},
 		resetGame: (state) => {
 			state.board = createBoard()
 			state.currentPiece = null
@@ -80,10 +84,11 @@ const gameSlice = createSlice({
 			state.timeLimit = 0
 			state.startTime = null
 			state.timeLeft = null
+			state.gravity = 1
 			state.status = "waiting"
 		}
 	}
 })
 
-export const {setRooms, setState, setMe, setRoomId, setPieces, setBoard, setCurrentPiece, consumePiece, setScore, setGameOver, resetGame, setTimeLimit, setStartTime, setTimeLeft, setInvisiblePieces} = gameSlice.actions
+export const {setRooms, setState, setMe, setRoomId, setPieces, setBoard, setCurrentPiece, consumePiece, setScore, setGameOver, resetGame, setTimeLimit, setStartTime, setTimeLeft, setInvisiblePieces, setGravity} = gameSlice.actions
 export default gameSlice.reducer

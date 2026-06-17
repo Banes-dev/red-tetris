@@ -17,12 +17,8 @@ export default function useGravity()
 	const dispatch = useDispatch()
 
 	const status = useSelector(state => state.game.status)
-	const rooms = useSelector(state => state.game.rooms)
 	const roomId = useSelector(state => state.game.roomId)
-
-	const currentRoom = rooms.find(room => room.id === roomId)
-	const gravity = currentRoom?.gravity || 1
-	// console.log(rooms, roomId, currentRoom)
+	const gravity = useSelector(state => state.game.gravity)
 
 	useEffect(() => {
 		if (status !== "playing")
@@ -50,16 +46,14 @@ export default function useGravity()
 
 				// Send lines cleared event to server for multiplayer effect
 				if (clearedData.cleared > 0)
-				{
 					socket.emit("lines_cleared", {roomId, lines: clearedData.cleared})
-				}
 
 				dispatch(consumePiece())
-				if (pieces.length < 5) {
+				if (pieces.length < 5)
+				{
 					// Only emit socket event if not in solo mode
-					if (roomId !== "solo-room") {
+					if (roomId !== "solo-room")
 						socket.emit("request_pieces", {roomId})
-					}
 				}
 				const nextType = pieces[1]
 				if (nextType)
@@ -73,14 +67,13 @@ export default function useGravity()
 					// Check if the new piece can be spawned without collision
 					if (hasCollision(newBoard, newPiece, newPiece.x, newPiece.y))
 					{
-					// Game over - cannot spawn new piece
-					// Only emit socket event if not in solo mode
-					if (roomId !== "solo-room") {
-						socket.emit("game_over", {roomId, score: clearedData.score})
-					}
-					dispatch(setGameOver({gameOver: true, score: clearedData.score}))
-					dispatch(setCurrentPiece(null))
-					return
+						// Game over - cannot spawn new piece
+						// Only emit socket event if not in solo mode
+						if (roomId !== "solo-room")
+							socket.emit("game_over", {roomId, score: clearedData.score})
+						dispatch(setGameOver({gameOver: true, score: clearedData.score}))
+						dispatch(setCurrentPiece(null))
+						return
 					}
 					dispatch(setCurrentPiece(newPiece))
 				}

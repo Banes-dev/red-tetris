@@ -56,7 +56,7 @@ export default function SoloParam()
 				<div className="flex flex-col items-center justify-center flex-grow w-full">
 					<div className="flex flex-col items-center justify-center w-10/12 md:w-7/12 h-auto py-8 rounded-lg bg-arcade-black border-4 border-neon-yellow animate-slide_in_up">
 						{/* Display score */}
-						<div className="flex flex-row justify-between w-full px-12 mb-8">
+						<div className="flex flex-row justify-between w-full md:px-12 mb-8">
                             <div className="text-center">
                                 <p className="text-neon-cyan font-arcade text-lg">Best score</p>
                                 <p className="text-neon-red font-arcade text-3xl">{cookies.best_score || 0}</p>

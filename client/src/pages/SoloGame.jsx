@@ -2,7 +2,7 @@ import {useEffect, useState} from "react"
 import {useParams, useNavigate} from "react-router-dom"
 import {useDispatch, useSelector} from "react-redux"
 
-import {setState, setMe, setRoomId, setPieces, setBoard, setCurrentPiece, setScore, setGameOver, setTimeLimit, setStartTime, setInvisiblePieces} from "../store/game_slice"
+import {setState, setMe, setRoomId, setPieces, setBoard, setCurrentPiece, setScore, setGameOver, setTimeLimit, setStartTime, setInvisiblePieces, setGravity} from "../store/game_slice"
 import {createBoard} from "../games/game/board"
 import {PIECES} from "../games/game/pieces"
 
@@ -39,6 +39,7 @@ export default function SoloGame()
 		dispatch(setTimeLimit(parseInt(timeLimit) || 0))
 		dispatch(setStartTime(Date.now()))
 		dispatch(setInvisiblePieces(invisiblePieces === 'true'))
+		dispatch(setGravity(parseInt(gravityLevel) || 1))
 		dispatch(setMe("solo-player"))
 		dispatch(setRoomId("solo-room"))
 		dispatch(setState({

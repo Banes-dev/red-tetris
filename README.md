@@ -15,7 +15,6 @@
 # Server
 
 To do :
-- Gravité non choisi dans le mode solo
 - npm audit la secu
 - Héberger projet sur vps et accessible partout / public le repo github + lien pour test
 - Recheck sujet et correction
