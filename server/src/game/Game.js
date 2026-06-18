@@ -13,7 +13,7 @@ export function createRNG(seed)
 
 
 
-function Game({id, gravityLevel, invisiblePieces, timeLimit, playerLimit, isPrivate, password, seed})
+function Game({id, gravityLevel, invisiblePieces, opponentSpecters, timeLimit, playerLimit, isPrivate, password, seed})
 {
 	this.id = id
 	this.players = []
@@ -23,6 +23,7 @@ function Game({id, gravityLevel, invisiblePieces, timeLimit, playerLimit, isPriv
 	// settings
 	this.gravityLevel = gravityLevel
 	this.invisiblePieces = invisiblePieces
+	this.opponentSpecters = opponentSpecters
 	this.timeLimit = timeLimit
 	this.playerLimit = playerLimit
 	this.isPrivate = isPrivate
@@ -71,6 +72,29 @@ Game.prototype.getNextPieces = function (count = 5)
 	const pieces = this.pieceQueue.splice(0, count)
 	this.fillQueue()
 	return pieces
+}
+
+// Calculate specter from a board - returns array of first occupied line per column
+Game.prototype.calculateSpecter = function (board)
+{
+	if (!board || board.length === 0)
+		return Array(10).fill(-1)  // -1 means no blocks in column
+
+	const specter = []
+	for (let col = 0; col < 10; col++)
+	{
+		for (let row = 0; row < board.length; row++)
+		{
+			if (board[row][col] !== 0)
+			{
+				specter[col] = row
+				break
+			}
+		}
+		if (specter[col] === undefined)
+			specter[col] = -1
+	}
+	return specter
 }
 
 export default Game

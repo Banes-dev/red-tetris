@@ -10,6 +10,7 @@ import GameSocket from "./hooks/game_socket"
 import Gravity from "./hooks/gravity"
 import Keyboard from "./hooks/keyboard"
 import Timer from "./hooks/timer"
+import BoardUpdates from "./hooks/board_updates"
 
 import Lobby from "./components/Lobby"
 import GameGrid from "./components/GameGrid"
@@ -34,6 +35,7 @@ export default function GamePage()
 	Gravity()
 	Keyboard()
 	Timer()
+	BoardUpdates()
 
 	useEffect(() => {
 		socket.emit("join_room", {roomId: paramRoomId, playerName: paramPlayerName}, (response) => {

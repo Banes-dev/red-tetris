@@ -13,14 +13,15 @@ export default function MultiParam()
 	const [errorMessage, setErrorMessage] = useState('');
 
     // Paramètres de la room
-    const [roomName, setRoomName] = useState('');
-    const [playerName, setPlayerName] = useState('');
-    const [gravityLevel, setGravityLevel] = useState(1);
-    const [invisiblePieces, setInvisiblePieces] = useState(false);
-    const [timeLimit, setTimeLimit] = useState(2);
-    const [playerLimit, setPlayerLimit] = useState(4);
-    const [isPrivate, setIsPrivate] = useState(false);
-    const [roomPassword, setRoomPassword] = useState('');
+        const [roomName, setRoomName] = useState('');
+        const [playerName, setPlayerName] = useState('');
+        const [gravityLevel, setGravityLevel] = useState(1);
+        const [invisiblePieces, setInvisiblePieces] = useState(false);
+        const [opponentSpecters, setOpponentSpecters] = useState(false);
+        const [timeLimit, setTimeLimit] = useState(2);
+        const [playerLimit, setPlayerLimit] = useState(4);
+        const [isPrivate, setIsPrivate] = useState(false);
+        const [roomPassword, setRoomPassword] = useState('');
 
     const timeOptions = [1, 2, 3, 5, 8, 10, 15];
     const playerLimitOptions = [2, 3, 4, 5, 6, 8, 10];
@@ -47,6 +48,7 @@ export default function MultiParam()
 			playerName,
 			gravityLevel,
 			invisiblePieces,
+			opponentSpecters,
 			timeLimit,
 			playerLimit,
 			isPrivate,
@@ -146,6 +148,15 @@ export default function MultiParam()
                                 <label className="block text-neon-cyan font-arcade text-lg mb-2">Invisible Pieces</label>
                                 <label className="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" checked={invisiblePieces} onChange={() => setInvisiblePieces(!invisiblePieces)} className="sr-only peer"/>
+                                    <div className="w-11 h-6 bg-arcade-purple border-2 border-neon-magenta rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-neon-cyan after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-neon-cyan after:border-neon-cyan after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neon-red peer-checked:border-neon-red"></div>
+                                </label>
+                            </div>
+
+                            {/* Opponent Specters */}
+                            <div className="mb-6 w-full">
+                                <label className="block text-neon-cyan font-arcade text-lg mb-2">Opponent Specters</label>
+                                <label className="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" checked={opponentSpecters} onChange={() => setOpponentSpecters(!opponentSpecters)} className="sr-only peer"/>
                                     <div className="w-11 h-6 bg-arcade-purple border-2 border-neon-magenta rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-neon-cyan after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-neon-cyan after:border-neon-cyan after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-neon-red peer-checked:border-neon-red"></div>
                                 </label>
                             </div>

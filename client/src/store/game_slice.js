@@ -18,7 +18,9 @@ const initialState = {
 	startTime: null,
 	timeLeft: null,
 	invisiblePieces: false,
-	gravity: 1  // default gravity level
+	gravity: 1,  // default gravity level
+	opponentSpecters: {},  // Store specters for each opponent: {playerId: {name: string, specter: array}}
+	opponentSpectersEnabled: false  // Whether opponent specters feature is enabled
 }
 
 const gameSlice = createSlice({
@@ -86,9 +88,19 @@ const gameSlice = createSlice({
 			state.timeLeft = null
 			state.gravity = 1
 			state.status = "waiting"
+		},
+		setOpponentSpecter: (state, action) => {
+			const {playerId, playerName, specter} = action.payload
+			state.opponentSpecters[playerId] = {
+				name: playerName,
+				specter: specter
+			}
+		},
+		setOpponentSpectersEnabled: (state, action) => {
+			state.opponentSpectersEnabled = action.payload
 		}
 	}
 })
 
-export const {setRooms, setState, setMe, setRoomId, setPieces, setBoard, setCurrentPiece, consumePiece, setScore, setGameOver, resetGame, setTimeLimit, setStartTime, setTimeLeft, setInvisiblePieces, setGravity} = gameSlice.actions
+export const {setRooms, setState, setMe, setRoomId, setPieces, setBoard, setCurrentPiece, consumePiece, setScore, setGameOver, resetGame, setTimeLimit, setStartTime, setTimeLeft, setInvisiblePieces, setGravity, setOpponentSpecter, setOpponentSpectersEnabled} = gameSlice.actions
 export default gameSlice.reducer

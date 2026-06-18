@@ -24,19 +24,19 @@ export function registerGameSocket(io, socket)
 		socket.emit("rooms_list", rooms)
 	})
 
-	// Create room
-	socket.on("create_room", (data, callback) => {
-		const {roomName, playerName, gravityLevel, invisiblePieces, timeLimit, playerLimit, isPrivate, roomPassword} = data
-		const existing = roomManager.getRoom(roomName)
-		if (existing)
-		{
-			callback({success: false, message: "Room already exists"});
-			return
-		}
+		// Create room
+		socket.on("create_room", (data, callback) => {
+			const {roomName, playerName, gravityLevel, invisiblePieces, opponentSpecters, timeLimit, playerLimit, isPrivate, roomPassword} = data
+			const existing = roomManager.getRoom(roomName)
+			if (existing)
+			{
+				callback({success: false, message: "Room already exists"});
+				return
+			}
 
-		const game = roomManager.createRoom({roomName, gravityLevel, invisiblePieces, timeLimit, playerLimit, isPrivate, roomPassword})
-		const player = new Player(socket.id, playerName)
-		game.addPlayer(player)
+			const game = roomManager.createRoom({roomName, gravityLevel, invisiblePieces, opponentSpecters, timeLimit, playerLimit, isPrivate, roomPassword})
+			const player = new Player(socket.id, playerName)
+			game.addPlayer(player)
 
 		socket.join(roomName)
 		io.to(roomName).emit("room_update", {
@@ -177,7 +177,8 @@ export function registerGameSocket(io, socket)
 			seed: game.seed,
 			pieces: game.pieceQueue.slice(0, 10),
 			timeLimit: game.timeLimit,  // Send time limit to clients
-			invisiblePieces: game.invisiblePieces  // Send invisible pieces option
+			invisiblePieces: game.invisiblePieces,  // Send invisible pieces option
+			opponentSpecters: game.opponentSpecters  // Send opponent specters option
 		})
 		io.to(roomId).emit("room_update", {players: game.players, leader: game.leader, status: game.status})
 
@@ -209,6 +210,36 @@ export function registerGameSocket(io, socket)
 				players: game.players,
 				leader: game.leader,
 				status: game.status
+			})
+		}
+	})
+
+	// Update player board and send specter updates to opponents
+	socket.on("update_board", ({roomId, board}) => {
+		const game = roomManager.getRoom(roomId)
+		if (!game)
+			return
+
+		// Only process if opponent specters feature is enabled
+		if (!game.opponentSpecters)
+			return
+
+		const player = game.players.find(p => p.id === socket.id)
+		if (player)
+		{
+			player.board = board
+			// Calculate specter and send to all other players
+			const specter = game.calculateSpecter(board)
+
+			game.players.forEach(opponent => {
+				if (opponent.id !== socket.id)  // Don't send to the player who updated
+				{
+					io.to(opponent.id).emit("opponent_specter_update", {
+						playerId: socket.id,
+						playerName: player.name,
+						specter: specter
+					})
+				}
 			})
 		}
 	})

@@ -18,6 +18,7 @@ RoomManager.prototype.createRoom = function(config)
 		id: config.roomName,
 		gravityLevel: config.gravityLevel,
 		invisiblePieces: config.invisiblePieces,
+		opponentSpecters: config.opponentSpecters,
 		timeLimit: config.timeLimit,
 		playerLimit: config.playerLimit,
 		isPrivate: config.isPrivate,

@@ -1,5 +1,6 @@
 import {useSelector} from "react-redux"
 import {PIECE_COLORS} from "../game/pieces"
+import OpponentSpecters from "./OpponentSpecters"
 
 export default function GameGrid()
 {
@@ -70,6 +71,7 @@ export default function GameGrid()
 					)
 				})}
 			</div>
+			<OpponentSpecters />
 		</div>
 	)
 }

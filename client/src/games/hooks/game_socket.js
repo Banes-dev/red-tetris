@@ -1,7 +1,7 @@
 import {useEffect} from "react"
 import {useDispatch, useSelector} from "react-redux"
 
-import {setState, setPieces, setBoard, setCurrentPiece, setScore, setGameOver, setTimeLimit, setStartTime, setInvisiblePieces} from "../../store/game_slice"
+import {setState, setPieces, setBoard, setCurrentPiece, setScore, setGameOver, setTimeLimit, setStartTime, setInvisiblePieces, setOpponentSpecter, setOpponentSpectersEnabled} from "../../store/game_slice"
 import {addBlockedLines} from "../game/blocked_lines"
 
 import {socket} from "../../socket/socket"
@@ -35,13 +35,14 @@ export default function GameSocket()
 			}
 		})
 
-		socket.on("game_started", ({pieces, timeLimit, invisiblePieces}) => {
+		socket.on("game_started", ({pieces, timeLimit, invisiblePieces, opponentSpecters}) => {
 			dispatch(setPieces(pieces))
 			dispatch(setBoard(createBoard()))
 			dispatch(setScore(0))
 			dispatch(setTimeLimit(timeLimit))
 			dispatch(setStartTime(Date.now()))
 			dispatch(setInvisiblePieces(invisiblePieces || false))
+			dispatch(setOpponentSpectersEnabled(opponentSpecters || false))
 
 			const type = pieces[0]
 
@@ -85,6 +86,11 @@ export default function GameSocket()
 			}))
 		})
 
+		// Handle opponent specter updates
+		socket.on("opponent_specter_update", ({playerId, playerName, specter}) => {
+			dispatch(setOpponentSpecter({playerId, playerName, specter}))
+		})
+
 		return () => {
 			socket.off("room_update")
 			socket.off("game_started")
@@ -92,6 +98,7 @@ export default function GameSocket()
 			socket.off("add_blocked_lines")
 			socket.off("all_players_finished")
 			socket.off("player_finished")
+			socket.off("opponent_specter_update")
 		}
 	}, [dispatch])
 }
