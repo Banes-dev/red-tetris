@@ -13,7 +13,7 @@ export function createRNG(seed)
 
 
 
-function Game({id, gravityLevel, invisiblePieces, timeLimit, playerLimit, isPrivate, password})
+function Game({id, gravityLevel, invisiblePieces, timeLimit, playerLimit, isPrivate, password, seed})
 {
 	this.id = id
 	this.players = []
@@ -29,7 +29,7 @@ function Game({id, gravityLevel, invisiblePieces, timeLimit, playerLimit, isPriv
 	this.password = password
 
 	// piece system
-	this.seed = Date.now()
+	this.seed = seed || Date.now()
 	this.rng = createRNG(this.seed)
 	this.pieceQueue = []
 

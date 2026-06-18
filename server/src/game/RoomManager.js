@@ -10,6 +10,10 @@ RoomManager.prototype.createRoom = function(config)
 	if (this.rooms.has(config.roomName))
 		return null
 
+	// Generate a consistent seed based on room name to ensure all players get same pieces
+	// This ensures that if the same room is recreated, it will have the same piece sequence
+	const seed = this.hashStringToNumber(config.roomName)
+
 	const game = new Game({
 		id: config.roomName,
 		gravityLevel: config.gravityLevel,
@@ -17,11 +21,25 @@ RoomManager.prototype.createRoom = function(config)
 		timeLimit: config.timeLimit,
 		playerLimit: config.playerLimit,
 		isPrivate: config.isPrivate,
-		password: config.roomPassword
+		password: config.roomPassword,
+		seed: seed
 	})
 	this.rooms.set(config.roomName, game)
 
 	return game
+}
+
+// Helper function to generate consistent seed from room name
+RoomManager.prototype.hashStringToNumber = function(str)
+{
+	let hash = 0
+	for (let i = 0; i < str.length; i++)
+	{
+		const char = str.charCodeAt(i)
+		hash = ((hash << 5) - hash) + char
+		hash = hash & hash // Convert to 32bit integer
+	}
+	return Math.abs(hash)
 }
 
 RoomManager.prototype.getRoom = function(roomId)

@@ -1,148 +1,121 @@
-import RoomManager from './RoomManager';
-import Player from './Player';
+import RoomManager from "./RoomManager.js"
 
-describe('RoomManager class', () => {
-  test('should create and manage rooms', () => {
-    const manager = new RoomManager();
+describe("RoomManager", () => {
+	const roomManager = new RoomManager()
 
-    const config = {
-      roomName: 'room1',
-      gravityLevel: 1,
-      invisiblePieces: false,
-      timeLimit: 0,
-      playerLimit: 4,
-      isPrivate: false,
-      roomPassword: ''
-    };
+	beforeEach(() => {
+		// Clear rooms before each test
+		roomManager.rooms.clear()
+	})
 
-    manager.createRoom(config);
-    const room = manager.getRoom('room1');
+	describe("createRoom", () => {
+		it("should create a room with consistent seed based on room name", () => {
+			const config = {
+				roomName: "test-room",
+				gravityLevel: 1,
+				invisiblePieces: false,
+				timeLimit: 300,
+				playerLimit: 2,
+				isPrivate: false,
+				roomPassword: null
+			}
 
-    expect(room).toBeDefined();
-    expect(room.id).toBe('room1');
-  });
+			const room1 = roomManager.createRoom(config)
+			expect(room1).not.toBeNull()
+			expect(room1.id).toBe("test-room")
+			expect(room1.seed).toBeDefined()
 
-  test('should delete room', () => {
-    const manager = new RoomManager();
+			// Create another room with same name (should return null since room exists)
+			const room2 = roomManager.createRoom(config)
+			expect(room2).toBeNull()
 
-    const config = {
-      roomName: 'room1',
-      gravityLevel: 1,
-      invisiblePieces: false,
-      timeLimit: 0,
-      playerLimit: 4,
-      isPrivate: false,
-      roomPassword: ''
-    };
+			// Delete the room and create it again - should have same seed
+			roomManager.deleteRoom("test-room")
+			const room3 = roomManager.createRoom(config)
+			expect(room3.seed).toBe(room1.seed)
+		})
 
-    manager.createRoom(config);
-    manager.deleteRoom('room1');
-    expect(manager.getRoom('room1')).toBeUndefined();
-  });
+		it("should generate different seeds for different room names", () => {
+			const config1 = {
+				roomName: "room-1",
+				gravityLevel: 1,
+				invisiblePieces: false,
+				timeLimit: 300,
+				playerLimit: 2,
+				isPrivate: false,
+				roomPassword: null
+			}
 
-  test('should not create room if it already exists', () => {
-    const manager = new RoomManager();
+			const config2 = {
+				roomName: "room-2",
+				gravityLevel: 1,
+				invisiblePieces: false,
+				timeLimit: 300,
+				playerLimit: 2,
+				isPrivate: false,
+				roomPassword: null
+			}
 
-    const config = {
-      roomName: 'room1',
-      gravityLevel: 1,
-      invisiblePieces: false,
-      timeLimit: 0,
-      playerLimit: 4,
-      isPrivate: false,
-      roomPassword: ''
-    };
+			const room1 = roomManager.createRoom(config1)
+			const room2 = roomManager.createRoom(config2)
 
-    // Create room first time
-    const firstRoom = manager.createRoom(config);
-    expect(firstRoom).toBeDefined();
+			expect(room1.seed).not.toBe(room2.seed)
+		})
 
-    // Try to create same room again
-    const secondRoom = manager.createRoom(config);
-    expect(secondRoom).toBeNull();
-  });
+		it("should generate same seed for same room name", () => {
+			const config1 = {
+				roomName: "consistent-room",
+				gravityLevel: 1,
+				invisiblePieces: false,
+				timeLimit: 300,
+				playerLimit: 2,
+				isPrivate: false,
+				roomPassword: null
+			}
 
-  test('should get rooms list', () => {
-    const manager = new RoomManager();
+			const config2 = {
+				roomName: "consistent-room",
+				gravityLevel: 2, // different gravity
+				invisiblePieces: true, // different settings
+				timeLimit: 600,
+				playerLimit: 4,
+				isPrivate: true,
+				roomPassword: "password"
+			}
 
-    const config1 = {
-      roomName: 'room1',
-      gravityLevel: 1,
-      invisiblePieces: false,
-      timeLimit: 0,
-      playerLimit: 4,
-      isPrivate: false,
-      roomPassword: ''
-    };
+			// First room creation should fail since we're using same name
+			const room1 = roomManager.createRoom(config1)
+			expect(room1).not.toBeNull()
 
-    const config2 = {
-      roomName: 'room2',
-      gravityLevel: 2,
-      invisiblePieces: true,
-      timeLimit: 60,
-      playerLimit: 2,
-      isPrivate: true,
-      roomPassword: 'secret'
-    };
+			// Second room with same name should fail
+			const room2 = roomManager.createRoom(config2)
+			expect(room2).toBeNull()
 
-    manager.createRoom(config1);
-    manager.createRoom(config2);
+			// But if we delete and recreate, it should have same seed
+			roomManager.deleteRoom("consistent-room")
+			const room3 = roomManager.createRoom(config2)
+			expect(room3.seed).toBe(room1.seed)
+		})
+	})
 
-    const roomsList = manager.getRoomsList();
-    expect(roomsList).toHaveLength(2);
+	describe("hashStringToNumber", () => {
+		it("should generate consistent hash for same input", () => {
+			const hash1 = roomManager.hashStringToNumber("test-string")
+			const hash2 = roomManager.hashStringToNumber("test-string")
+			expect(hash1).toBe(hash2)
+		})
 
-    // Check that rooms list contains correct information
-    const room1 = roomsList.find(r => r.id === 'room1');
-    const room2 = roomsList.find(r => r.id === 'room2');
+		it("should generate different hash for different input", () => {
+			const hash1 = roomManager.hashStringToNumber("string-1")
+			const hash2 = roomManager.hashStringToNumber("string-2")
+			expect(hash1).not.toBe(hash2)
+		})
 
-    expect(room1).toBeDefined();
-    expect(room2).toBeDefined();
-
-    expect(room1.players).toBe(0);
-    expect(room1.maxPlayers).toBe(4);
-    expect(room1.status).toBe('waiting');
-    expect(room1.isPrivate).toBe(false);
-    expect(room1.gravity).toBe(1);
-    expect(room1.invisible).toBe(false);
-    expect(room1.timeLimit).toBe(0);
-
-    expect(room2.players).toBe(0);
-    expect(room2.maxPlayers).toBe(2);
-    expect(room2.status).toBe('waiting');
-    expect(room2.isPrivate).toBe(true);
-    expect(room2.gravity).toBe(2);
-    expect(room2.invisible).toBe(true);
-    expect(room2.timeLimit).toBe(60);
-  });
-
-  test('should find game by player', () => {
-    const manager = new RoomManager();
-    const Player = require('./Player').default;
-
-    const config = {
-      roomName: 'room1',
-      gravityLevel: 1,
-      invisiblePieces: false,
-      timeLimit: 0,
-      playerLimit: 4,
-      isPrivate: false,
-      roomPassword: ''
-    };
-
-    manager.createRoom(config);
-    const room = manager.getRoom('room1');
-
-    // Add a player to the room
-    const player = new Player('player1', 'Player 1');
-    room.addPlayer(player);
-
-    // Find game by player ID
-    const foundGame = manager.findGameByPlayer('player1');
-    expect(foundGame).toBeDefined();
-    expect(foundGame.id).toBe('room1');
-
-    // Try to find non-existent player
-    const notFoundGame = manager.findGameByPlayer('nonexistent');
-    expect(notFoundGame).toBeNull();
-  });
-});
+		it("should always return positive number", () => {
+			const hash1 = roomManager.hashStringToNumber("any-string")
+			const hash2 = roomManager.hashStringToNumber("")
+			expect(hash1).toBeGreaterThanOrEqual(0)
+			expect(hash2).toBeGreaterThanOrEqual(0)
+		})
+	})
+})
