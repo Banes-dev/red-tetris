@@ -9,7 +9,8 @@
 - ```npm run dev``` (web)
 
 ### Production
-- ```npm run build``` (web)
+- ```npm run build``` in /client
+- ```npm install --production``` in /server
 
 
 
