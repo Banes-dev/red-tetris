@@ -59,3 +59,4 @@ RoomManager.prototype.deleteRoom = function(roomId)
 }
 
 export const roomManager = new RoomManager()
+export default RoomManager

@@ -1,6 +1,13 @@
 {
   "devDependencies": {
-    "npm-run-all": "^4.1.5"
+    "npm-run-all": "^4.1.5",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "babel-jest": "^29.7.0",
+    "@babel/preset-env": "^7.25.3",
+    "@babel/preset-react": "^7.24.7",
+    "@babel/runtime": "^7.25.0",
+    "@testing-library/jest-dom": "^6.4.8"
   },
   "scripts": {
     "dev:client": "npm run dev --prefix client",
@@ -8,6 +15,8 @@
     "dev": "npm-run-all --parallel dev:*",
     "build": "npm-run-all build:*",
     "build:client": "npm run build --prefix client",
-    "build:server": "npm run build --prefix server"
+    "build:server": "npm run build --prefix server",
+    "test": "jest --coverage",
+    "coverage": "jest --coverage"
   }
 }
