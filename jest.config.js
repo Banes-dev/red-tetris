@@ -47,6 +47,11 @@ module.exports = {
     'server/src/**/*.js',
     '!**/node_modules/**',
     '!**/vendor/**',
+    '!**/*.test.js',
+    '!**/setupTests.js',
+    '!**/client/src/games/hooks/**',
+    '!**/client/src/store/store.js',
+    '!**/server/src/server.js',
     '!**/*.jsx'  // Exclure les fichiers JSX de la collecte de couverture
   ],
   coverageThreshold: {

@@ -3,6 +3,7 @@
 - ```npm install``` -> install the module need for the project
 - ```npm update``` -> update all module
 - ```npm audit``` -> check if module is outdated
+- ```npm run coverage``` -> launch test unit of client and server with jest and babel
 
 ### Dev
 - ```npm run dev``` (web)
@@ -15,8 +16,8 @@
 # Server
 
 To do :
+- Spectre des autres joueurs a voir en multi
 - Héberger projet sur vps et accessible partout / public le repo github + lien pour test
-- Recheck sujet et correction
 
 
 
