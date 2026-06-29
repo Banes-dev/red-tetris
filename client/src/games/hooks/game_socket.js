@@ -48,6 +48,7 @@ export default function GameSocket()
 
 			dispatch(setCurrentPiece({
 				type,
+				rotation: 0,
 				shape: PIECES[type][0],
 				x: 3,
 				y: 0

@@ -11,8 +11,19 @@ RoomManager.prototype.createRoom = function(config)
 		return null
 
 	// Generate a consistent seed based on room name to ensure all players get same pieces
-	// This ensures that if the same room is recreated, it will have the same piece sequence
-	const seed = this.hashStringToNumber(config.roomName)
+	// but add a room creation counter to ensure different sequences when room is recreated
+	// Initialize room counter if it doesn't exist
+	if (!this.roomCreationCounts) {
+		this.roomCreationCounts = new Map()
+	}
+
+	// Get creation count for this room name and increment it
+	let creationCount = this.roomCreationCounts.get(config.roomName) || 0
+	creationCount++
+	this.roomCreationCounts.set(config.roomName, creationCount)
+
+	// Use room name + creation count for seed
+	const seed = this.hashStringToNumber(config.roomName + creationCount)
 
 	const game = new Game({
 		id: config.roomName,

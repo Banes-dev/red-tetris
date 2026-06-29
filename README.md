@@ -17,7 +17,6 @@
 # Server
 
 To do :
-- Spectre des autres joueurs a voir en multi
 - Héberger projet sur vps et accessible partout / public le repo github + lien pour test
 
 

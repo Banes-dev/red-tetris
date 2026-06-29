@@ -171,11 +171,14 @@ export function registerGameSocket(io, socket)
 		}
 		game.status = "playing"
 		game.startTime = Date.now()  // Set game start time
-		game.fillQueue()
+		game.fillQueue() // Fill the initial piece queue
+
+		// Send ALL pieces to clients at once to ensure synchronization
+		// This prevents desynchronization from individual piece requests
 		io.to(roomId).emit("game_started", {
 			roomId,
 			seed: game.seed,
-			pieces: game.pieceQueue.slice(0, 10),
+			pieces: [...game.pieceQueue], // Send ALL pieces, not just first 10
 			timeLimit: game.timeLimit,  // Send time limit to clients
 			invisiblePieces: game.invisiblePieces,  // Send invisible pieces option
 			opponentSpecters: game.opponentSpecters  // Send opponent specters option

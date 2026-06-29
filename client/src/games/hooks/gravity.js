@@ -49,12 +49,7 @@ export default function useGravity()
 					socket.emit("lines_cleared", {roomId, lines: clearedData.cleared})
 
 				dispatch(consumePiece())
-				if (pieces.length < 5)
-				{
-					// Only emit socket event if not in solo mode
-					if (roomId !== "solo-room")
-						socket.emit("request_pieces", {roomId})
-				}
+				// No need to request more pieces - all pieces are sent at game start
 				const nextType = pieces[1]
 				if (nextType)
 				{

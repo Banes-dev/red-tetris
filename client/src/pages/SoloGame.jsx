@@ -5,6 +5,7 @@ import {useDispatch, useSelector} from "react-redux"
 import {setState, setMe, setRoomId, setPieces, setBoard, setCurrentPiece, setScore, setGameOver, setTimeLimit, setStartTime, setInvisiblePieces, setGravity} from "../store/game_slice"
 import {createBoard} from "../games/game/board"
 import {PIECES} from "../games/game/pieces"
+import {store} from "../store/store"
 
 import GameSocket from "../games/hooks/game_socket"
 import Gravity from "../games/hooks/gravity"
@@ -33,7 +34,27 @@ export default function SoloGame()
 	// Initialize solo game
 	useEffect(() => {
 		// Set up solo game with parameters from URL
-		dispatch(setPieces(["I", "O", "T", "L", "J", "S", "Z", "I", "O", "T", "L", "J", "S", "Z"])) // Initial pieces queue
+		// Generate a random piece sequence for solo mode
+		function generateRandomPieces(count = 50) {
+			const pieces = []
+			const pieceTypes = ["I", "O", "T", "L", "J", "S", "Z"]
+			// Create a copy of piece types for shuffling
+			const shuffledPieces = [...pieceTypes]
+
+			// Use Fisher-Yates shuffle algorithm for better randomization
+			for (let i = shuffledPieces.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1))
+				;[shuffledPieces[i], shuffledPieces[j]] = [shuffledPieces[j], shuffledPieces[i]]
+			}
+
+			// Create sequence by cycling through shuffled pieces
+			for (let i = 0; i < count; i++) {
+				pieces.push(shuffledPieces[i % shuffledPieces.length])
+			}
+			return pieces
+		}
+
+		dispatch(setPieces(generateRandomPieces())) // Random pieces queue
 		dispatch(setBoard(createBoard()))
 		dispatch(setScore(0))
 		dispatch(setTimeLimit(parseInt(timeLimit) || 0))
@@ -41,17 +62,19 @@ export default function SoloGame()
 		dispatch(setInvisiblePieces(invisiblePieces === 'true'))
 		dispatch(setGravity(parseInt(gravityLevel) || 1))
 		dispatch(setMe("solo-player"))
-		dispatch(setRoomId("solo-room"))
+		dispatch(setRoomId("solo-room-" + Date.now())) // Unique room ID for each session
 		dispatch(setState({
 			players: [{id: "solo-player", name: "You", score: 0}],
 			leader: "solo-player",
 			status: "playing"
 		}))
 
-		// Set first piece
-		const firstType = "I" // Start with I piece
+		// Set first piece - use first piece from the random sequence
+		const pieces = store.getState().game.pieces
+		const firstType = pieces[0]
 		dispatch(setCurrentPiece({
 			type: firstType,
+			rotation: 0,
 			shape: PIECES[firstType][0],
 			x: 3,
 			y: 0
