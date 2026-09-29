@@ -44,8 +44,6 @@ export default function GameSocket()
 			dispatch(setInvisiblePieces(invisiblePieces || false))
 			dispatch(setOpponentSpectersEnabled(opponentSpecters || false))
 
-			console.log(pieces)
-
 			const type = pieces[0]
 
 			dispatch(setCurrentPiece({
