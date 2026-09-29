@@ -42,7 +42,7 @@ const gameSlice = createSlice({
 			state.roomId = action.payload
 		},
 		setPieces: (state, action) => {
-			state.pieces = [...state.pieces, ...action.payload]
+			state.pieces = action.payload
 		},
 		setBoard: (state, action) => {
 			state.board = action.payload

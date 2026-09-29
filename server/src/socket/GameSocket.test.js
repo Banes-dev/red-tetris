@@ -33,7 +33,6 @@ describe('GameSocket functions', () => {
     expect(mockSocket.on).toHaveBeenCalledWith('leave_game', expect.any(Function));
     expect(mockSocket.on).toHaveBeenCalledWith('disconnect', expect.any(Function));
     expect(mockSocket.on).toHaveBeenCalledWith('start_game', expect.any(Function));
-    expect(mockSocket.on).toHaveBeenCalledWith('request_pieces', expect.any(Function));
     expect(mockSocket.on).toHaveBeenCalledWith('update_score', expect.any(Function));
     expect(mockSocket.on).toHaveBeenCalledWith('lines_cleared', expect.any(Function));
     expect(mockSocket.on).toHaveBeenCalledWith('game_over', expect.any(Function));
@@ -211,35 +210,6 @@ describe('GameSocket functions', () => {
     expect(mockIo.to).toHaveBeenCalledWith('test-room');
     expect(mockIo.emit).toHaveBeenCalledWith('game_started', expect.any(Object));
     expect(mockCallback).toHaveBeenCalledWith({success: true});
-  });
-
-  test('should handle request_pieces event', () => {
-    registerGameSocket(mockIo, mockSocket);
-
-    // Mock roomManager.getRoom to return a game
-    const Game = require('../game/Game').default;
-    const mockGame = new Game({
-      id: 'test-room',
-      gravityLevel: 1,
-      invisiblePieces: false,
-      timeLimit: 0,
-      playerLimit: 4,
-      isPrivate: false,
-      password: ''
-    });
-
-    jest.spyOn(roomManager, 'getRoom').mockReturnValue(mockGame);
-
-    // Get the request_pieces handler
-    const requestPiecesHandler = mockSocket.on.mock.calls.find(
-      call => call[0] === 'request_pieces'
-    )[1];
-
-    // Call the handler
-    requestPiecesHandler({roomId: 'test-room'});
-
-    // Check that pieces were emitted
-    expect(mockSocket.emit).toHaveBeenCalledWith('pieces', expect.any(Object));
   });
 
   test('should handle update_score event', () => {
@@ -695,24 +665,6 @@ describe('GameSocket functions', () => {
     // Check that game was deleted since no players remain
     expect(roomManager.deleteRoom).toHaveBeenCalledWith('test-room');
     expect(mockIo.emit).toHaveBeenCalledWith('rooms_list', expect.any(Array));
-  });
-
-  test('should handle request_pieces error when room not found', () => {
-    registerGameSocket(mockIo, mockSocket);
-
-    // Mock roomManager.getRoom to return null (room not found)
-    jest.spyOn(roomManager, 'getRoom').mockReturnValue(null);
-
-    // Get the request_pieces handler
-    const requestPiecesHandler = mockSocket.on.mock.calls.find(
-      call => call[0] === 'request_pieces'
-    )[1];
-
-    // Call the handler
-    requestPiecesHandler({roomId: 'non-existent-room'});
-
-    // Check that no emissions were made
-    expect(mockSocket.emit).not.toHaveBeenCalled();
   });
 
   test('should handle update_score error when player not found', () => {

@@ -2,7 +2,7 @@ import {useEffect, useState} from "react"
 import {useParams, Link} from "react-router-dom"
 import {useDispatch, useSelector} from "react-redux"
 
-import {setState, setMe, setRoomId} from "../store/game_slice"
+import {setState, setMe, setRoomId, resetGame} from "../store/game_slice"
 import {socket} from "../socket/socket"
 import {useNavigate} from "react-router-dom"
 
@@ -87,6 +87,7 @@ export default function GamePage()
 				<button
 					onClick={() => {
 						socket.emit("leave_game", {roomId})
+						dispatch(resetGame())
 						navigate("/")
 					}}
 					className="absolute top-0 left-0 w-36 h-12 flex items-center justify-center rounded-br-lg bg-arcade-black border-b-4 border-r-4 border-neon-blue font-arcade text-white"

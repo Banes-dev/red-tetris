@@ -1,18 +1,3 @@
-// import {gameManager} from "../game/GameManager.js"
-
-// export function registerGameSocket(io, socket) {
-// 	socket.on("join_game", () => {
-// 		gameManager.addPlayer(socket.id)
-// 		socket.emit("joined", {
-// 			id: socket.id
-// 		})
-// 	})
-
-// 	socket.on("player_input", (input) => {
-// 		gameManager.handleInput(socket.id, input)
-// 	})
-// }
-
 import {roomManager} from "../game/RoomManager.js"
 import Player from "../game/Player.js"
 
@@ -187,16 +172,6 @@ export function registerGameSocket(io, socket)
 
 		console.log("game started : ", roomId)
 		callback({success: true});
-	})
-
-	// Request piece by client
-	socket.on("request_pieces", ({roomId}) => {
-		const game = roomManager.getRoom(roomId)
-		if (!game)
-			return
-
-		const pieces = game.getNextPieces(5)
-		socket.emit("pieces", pieces)
 	})
 
 	// Update player score

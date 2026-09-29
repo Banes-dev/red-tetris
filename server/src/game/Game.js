@@ -64,14 +64,8 @@ Game.prototype.generatePiece = function ()
 }
 Game.prototype.fillQueue = function ()
 {
-	while (this.pieceQueue.length < 50)
+	while (this.pieceQueue.length < 10000) // approximatively the world record is 10k of piece
 		this.pieceQueue.push(this.generatePiece())
-}
-Game.prototype.getNextPieces = function (count = 5)
-{
-	const pieces = this.pieceQueue.splice(0, count)
-	this.fillQueue()
-	return pieces
 }
 
 // Calculate specter from a board - returns array of first occupied line per column
