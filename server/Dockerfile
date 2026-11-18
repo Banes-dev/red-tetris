@@ -4,7 +4,7 @@ WORKDIR /app
 
 # Optimisation du cache Docker en copiant d'abord les fichiers de dépendances
 COPY package*.json ./
-RUN npm install --production
+RUN npm ci --omit=dev
 
 # Copie du reste du code source
 COPY . .
