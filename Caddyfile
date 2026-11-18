@@ -1,0 +1,9 @@
+redtetris.app, www.redtetris.app {
+	handle /socket.io/* {
+		reverse_proxy api-server:3000
+	}
+
+	handle {
+		reverse_proxy web-client:80
+	}
+}

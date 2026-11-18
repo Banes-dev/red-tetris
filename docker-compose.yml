@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  api-server:
+    build:
+      context: ./server
+    restart: always
+    environment:
+      - NODE_ENV=production
+    expose:
+      - "3000"
+
+  web-client:
+    build:
+      context: ./client
+    restart: always
+    depends_on:
+      - api-server
+    expose:
+      - "80"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web-client
+      - api-server
+
+volumes:
+  caddy_data:
+  caddy_config:
